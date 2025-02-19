@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style type="text/css">
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body, h1, h2, h3, h4, p {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #333333;
+      background-color: #f5f5f5;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 20px 0;
+      background-color: #ffffff;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .content {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 0 0 8px 8px;
+    }
+
+    .logo {
+      max-width: 200px;
+      margin-bottom: 20px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #666666;
+      font-size: 14px;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: #007bff;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 4px;
+      margin: 20px 0;
+    }
+
+    .order-details {
+      margin: 20px 0;
+      border: 1px solid #eeeeee;
+      border-radius: 4px;
+      padding: 15px;
+    }
+
+    .order-item {
+      padding: 10px 0;
+      border-bottom: 1px solid #eeeeee;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+    }
+
+    .price {
+      font-weight: bold;
+      color: #333333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <% if (logo) { %>
+        <img src="<%= logo %>" alt="<%= storeName %>" class="logo">
+      <% } %>
+      <h1><%= title %></h1>
+    </div>
+
+    <div class="content">
+      <%- content %>
+
+      <% if (orderDetails) { %>
+        <div class="order-details">
+          <h3>Order Details</h3>
+          <% orderDetails.items.forEach(function(item) { %>
+            <div class="order-item">
+              <p><strong><%= item.product.title %></strong></p>
+              <p>Quantity: <%= item.quantity %></p>
+              <p class="price">Price: $<%= item.price.toFixed(2) %></p>
+            </div>
+          <% }); %>
+          <div style="margin-top: 20px; border-top: 1px solid #eeeeee; padding-top: 15px;">
+            <p class="price">Total: $<%= orderDetails.total.toFixed(2) %></p>
+          </div>
+        </div>
+      <% } %>
+
+      <% if (cta) { %>
+        <a href="<%= cta.url %>" class="button"><%= cta.label %></a>
+      <% } %>
+    </div>
+
+    <div class="footer">
+      <p>&copy; <%= new Date().getFullYear() %> <%= storeName %>. All rights reserved.</p>
+      <% if (unsubscribe) { %>
+        <p><small><a href="<%= unsubscribe %>">Unsubscribe</a></small></p>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
