@@ -60,7 +60,7 @@ export default buildConfig({
   collections: [Users, Products, Pages, Categories, Media, Orders],
   // database-adapter-config-start
   db: mongooseAdapter({
-    url: process.env.DATABASE_URI || '',
+    url: process.env.MONGODB_URI || process.env.DATABASE_URI || (process.env.VERCEL_ENV === 'preview' ? 'mongodb://localhost:27017/temp-build-db' : 'mongodb://127.0.0.1:27017/payload-template-ecommerce')
   }),
   // database-adapter-config-end
   editor: lexicalEditor({
