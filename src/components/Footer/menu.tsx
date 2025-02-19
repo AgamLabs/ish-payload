@@ -16,7 +16,13 @@ export function FooterMenu({ menu }: Props) {
         {menu.map((item) => {
           return (
             <li key={item.id}>
-              <CMSLink appearance="link" {...item.link} />
+              <CMSLink appearance="link" {...{
+                ...item.link,
+                reference: item.link.reference ? {
+                  ...item.link.reference,
+                  value: typeof item.link.reference.value === 'number' ? String(item.link.reference.value) : item.link.reference.value
+                } : null
+              }} />
             </li>
           )
         })}

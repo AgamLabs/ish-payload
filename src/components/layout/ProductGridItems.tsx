@@ -1,4 +1,4 @@
-import type { Product } from '@/payload-types'
+import type { Media, Product } from '@/payload-types'
 
 import { Grid } from '@/components/grid'
 import { GridTileImage } from '@/components/grid/tile'
@@ -13,9 +13,9 @@ export function ProductGridItems({ products }: { products: Partial<Product>[] })
           typeof product.gallery?.[0] !== 'string' ? product.gallery?.[0] : undefined
         const metaImage = typeof product.meta?.image !== 'string' ? product.meta?.image : undefined
 
-        const image = metaImage || firstGalleryImage
+        const image = (metaImage || firstGalleryImage) as Media
 
-        if (!image) return null
+        if (!image || typeof image !== 'object') return null
 
         return (
           <Grid.Item className="animate-fadeIn" key={product.id}>

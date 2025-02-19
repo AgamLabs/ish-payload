@@ -19,13 +19,13 @@ export const ItemsList: React.FC<Props> = ({ items }) => {
 
         const product = item.product
         const _image =
-          product?.meta?.image && typeof product?.meta?.image !== 'string'
+          typeof product === 'object' && product?.meta?.image && typeof product?.meta?.image !== 'string'
             ? product.meta.image
             : undefined
 
         const isVariant = Boolean(item.variant)
-        const variant = item.product?.variants?.variants?.length
-          ? item.product.variants.variants.find((v) => v.id === item.variant)
+        const variant = typeof product === 'object' && product?.variants?.variants?.length
+          ? product.variants.variants.find((v) => v.id === item.variant)
           : undefined
 
        // In src/components/ItemsList/index.tsx
@@ -53,7 +53,7 @@ if (isVariant) {
   }
 }
 
-        const url = `/product/${product?.slug}${isVariant ? `?variant=${item.variant}` : ''}`
+        const url = `/product/${typeof product === 'object' ? product?.slug : ''}${isVariant ? `?variant=${item.variant}` : ''}`
 
         return (
           <li
@@ -65,7 +65,7 @@ if (isVariant) {
                 <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
                   {media?.url && (
                     <Image
-                      alt={media.alt || product?.title || ''}
+                      alt={media.alt || (typeof product === 'object' ? product?.title : '') || ''}
                       className="h-full w-full object-cover"
                       height={64}
                       src={media.url}
@@ -75,7 +75,7 @@ if (isVariant) {
                 </div>
 
                 <div className="flex flex-1 flex-col text-base">
-                  <span className="leading-tight">{product?.title}</span>
+                  <span className="leading-tight">{typeof product === 'object' ? product?.title : ''}</span>
                   {isVariant && info?.options?.length ? (
                     <p className="text-sm text-neutral-500 dark:text-neutral-400">
                       {info.options

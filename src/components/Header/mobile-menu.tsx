@@ -70,7 +70,13 @@ export function MobileMenu({ menu }: Props) {
             <ul className="flex w-full flex-col">
               {menu.map((item) => (
                 <li className="py-2" key={item.id}>
-                  <CMSLink {...item.link} appearance="link" />
+                  <CMSLink {...{
+                    ...item.link,
+                    reference: item.link.reference ? {
+                      ...item.link.reference,
+                      value: typeof item.link.reference.value === 'number' ? String(item.link.reference.value) : item.link.reference.value
+                    } : null
+                  }} appearance="link" />
                 </li>
               ))}
             </ul>

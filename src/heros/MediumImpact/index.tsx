@@ -17,7 +17,13 @@ export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richTex
             {links.map(({ link }, i) => {
               return (
                 <li key={i}>
-                  <CMSLink {...link} />
+                  <CMSLink {...{
+                    ...link,
+                    reference: link.reference ? {
+                      ...link.reference,
+                      value: typeof link.reference.value === 'number' ? String(link.reference.value) : link.reference.value
+                    } : null
+                  }} />
                 </li>
               )
             })}

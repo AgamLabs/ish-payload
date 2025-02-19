@@ -77,14 +77,21 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
     case 'ADD_ITEM': {
       // if the item is already in the cart, increase the quantity
       const { payload: incomingItem } = action
+      if (!incomingItem.product) return cart
+
       const productId =
-        typeof incomingItem.product === 'string' ? incomingItem.product : incomingItem?.product?.id
+        typeof incomingItem.product === 'string' ? incomingItem.product : (typeof incomingItem.product === 'object' && 'id' in incomingItem.product ? incomingItem.product.id : null)
+
+      if (!productId) return cart
 
       const indexInCart = cart?.items?.findIndex(({ product, variant }) => {
+        if (!product) return false
         if (incomingItem.variant) {
           return variant === incomingItem.variant
         } else {
-          return typeof product === 'string' ? product === productId : product?.id === productId
+          return typeof product === 'string' 
+            ? product === productId 
+            : (typeof product === 'object' && 'id' in product) ? product.id === productId : false
         }
       })  
 

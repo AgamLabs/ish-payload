@@ -21,7 +21,7 @@ export const sendOrderEmails: CollectionAfterChangeHook = async ({ doc, operatio
       try {
         const customer = await req.payload.findByID({
           collection: 'users',
-          id: userId as string,
+          id: String(userId),
         }) as User
         customerEmail = customer?.email
         req.payload.logger.info(`Found customer email: ${customerEmail}`)

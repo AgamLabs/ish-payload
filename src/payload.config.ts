@@ -1,7 +1,7 @@
 import type { GenerateTitle } from '@payloadcms/plugin-seo/types'
 
 import { Page as _Page, Product as _Product } from '@/payload-types'
-import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { payloadCloudPlugin as _payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { formBuilderPlugin as _formBuilderPlugin } from '@payloadcms/plugin-form-builder'
@@ -59,8 +59,10 @@ export default buildConfig({
   },
   collections: [Users, Products, Pages, Categories, Media, Orders],
   // database-adapter-config-start
-  db: mongooseAdapter({
-    url: process.env.MONGODB_URI || process.env.DATABASE_URI || (process.env.VERCEL_ENV === 'preview' ? 'mongodb://localhost:27017/temp-build-db' : 'mongodb://127.0.0.1:27017/payload-template-ecommerce')
+  db: postgresAdapter({
+    pool: {
+      connectionString: process.env.POSTGRES_URI
+    }
   }),
   // database-adapter-config-end
   editor: lexicalEditor({

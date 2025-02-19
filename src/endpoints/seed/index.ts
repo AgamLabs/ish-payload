@@ -217,6 +217,7 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding products...`)
 
+  // First create products without relationships
   const productMousepad = await payload.create({
     collection: 'products',
     depth: 0,
@@ -243,9 +244,31 @@ export const seed = async ({
         .replace(/"\{\{IMAGE_1\}\}"/g, String(image1ID))
         .replace(/"\{\{IMAGE_2\}\}"/g, String(image2ID))
         .replace(/"\{\{IMAGE_3\}\}"/g, String(image3ID))
-        .replace(/"\{\{CATEGORY_1\}\}"/g, String(hatsID))
-        .replace(/"\{\{RELATED_PRODUCT_1\}\}"/g, String(mousePadID)),
+        .replace(/"\{\{CATEGORY_1\}\}"/g, String(hatsID)),
     ),
+  })
+
+  let hatID: number | string = productHat.id
+
+  if (payload.db.defaultIDType === 'text') {
+    hatID = `"${hatID}"`
+  }
+
+  // Now update products with relationships
+  await payload.update({
+    collection: 'products',
+    id: productHat.id,
+    data: {
+      relatedProducts: [productMousepad.id],
+    },
+  })
+
+  await payload.update({
+    collection: 'products',
+    id: productMousepad.id,
+    data: {
+      relatedProducts: [productHat.id],
+    },
   })
 
   payload.logger.info(`— Seeding contact form...`)

@@ -55,7 +55,7 @@ const flattenCart = (cart: User['cart']): User['cart'] => ({
       return {
         ...item,
         // flatten relationship to product
-        product: typeof item.product === 'string' ? item.product : item.product.id,
+        product: typeof item.product === 'string' ? item.product : (typeof item.product === 'object' && 'id' in item.product ? item.product.id : item.product),
         variantID: item?.variant,
         quantity: typeof item?.quantity === 'number' ? item?.quantity : 0,
         variant: item?.variant,
@@ -202,9 +202,10 @@ export const CartProvider = (props) => {
             if (variantId) {
               return variant === variantId
             } else {
+              if (!product) return false
               return typeof product === 'string'
                 ? product === incomingProduct.id
-                : product?.id === incomingProduct.id
+                : (typeof product === 'object' && 'id' in product) ? product.id === incomingProduct.id : false
             }
           }),
         )

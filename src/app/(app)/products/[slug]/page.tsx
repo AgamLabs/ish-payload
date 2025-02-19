@@ -84,7 +84,7 @@ export default async function ProductPage({ params }: Args) {
     '@context': 'https://schema.org',
     '@type': 'Product',
     description: product.description,
-    image: metaImage?.url,
+    image: typeof metaImage === 'object' ? metaImage?.url : undefined,
     offers: {
       '@type': 'AggregateOffer',
       availability: hasStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
@@ -126,7 +126,7 @@ export default async function ProductPage({ params }: Args) {
                 <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden" />
               }
             >
-              {gallery?.length && <Gallery images={gallery} />}
+              {gallery?.length && <Gallery images={gallery.filter((item): item is Media => typeof item === 'object')} />}
             </Suspense>
           </div>
 

@@ -65,7 +65,7 @@ export function AddToCart({ product, variants }: Props) {
       })
 
       addItemToCart({
-        id: selectedVariantId ?? product.id,
+        id: String(selectedVariantId ?? product.id),
         product,
         quantity: 1,
         url: productUrl,

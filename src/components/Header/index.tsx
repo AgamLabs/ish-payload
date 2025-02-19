@@ -36,7 +36,13 @@ export async function Header() {
             <ul className="hidden gap-6 text-sm md:flex md:items-center">
               {menu.map((item) => (
                 <li key={item.id}>
-                  <CMSLink {...item.link} appearance="link" />
+                  <CMSLink {...{
+                    ...item.link,
+                    reference: item.link.reference ? {
+                      ...item.link.reference,
+                      value: typeof item.link.reference.value === 'number' ? String(item.link.reference.value) : item.link.reference.value
+                    } : null
+                  }} appearance="link" />
                 </li>
               ))}
             </ul>

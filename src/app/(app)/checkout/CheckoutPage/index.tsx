@@ -34,7 +34,7 @@ export const CheckoutPage: React.FC = () => {
         items: cart?.items?.reduce((acc, item) => {
           if (item?.product && typeof item.product === 'object' && item.product.id) {
             acc.push({
-              product: item.product.id,
+              product: String(item.product.id),
               quantity: item.quantity || 1,
             });
           }

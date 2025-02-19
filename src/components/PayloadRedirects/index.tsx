@@ -32,7 +32,7 @@ export const PayloadRedirects: React.FC<Props> = async ({ url }) => {
       }`
     } else {
       redirectUrl = `${redirectItem.to?.reference?.relationTo !== 'pages' ? `/${redirectItem.to?.reference?.relationTo}` : ''}/${
-        redirectItem.to?.reference?.value?.slug
+        typeof redirectItem.to?.reference?.value === 'object' ? redirectItem.to?.reference?.value?.slug : ''
       }`
     }
 

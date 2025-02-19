@@ -79,18 +79,18 @@ export function CartModal() {
                     return <React.Fragment key={i} />
 
                   const metaImage =
-                    product.meta?.image && typeof product.meta?.image !== 'string'
+                    typeof product === 'object' && product.meta?.image && typeof product.meta?.image !== 'string'
                       ? product.meta.image
                       : undefined
 
-                  const firstGalleryImage =
+                  const firstGalleryImage = typeof product === 'object' &&
                     typeof product.gallery?.[0] !== 'string' ? product.gallery?.[0] : undefined
 
                   let image = firstGalleryImage || metaImage
-                  let price = product.price
+                  let price = typeof product === 'object' ? product.price : 0
 
                   const isVariant = Boolean(item.variant)
-                  const variant = product?.variants?.variants?.length
+                  const variant = typeof product === 'object' && product?.variants?.variants?.length
                     ? product.variants.variants.find((v) => v.id === item.variant)
                     : undefined
 
@@ -113,9 +113,9 @@ export function CartModal() {
                         </div>
                         <Link className="z-30 flex flex-row space-x-4" href={item.url}>
                           <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
-                            {image?.url && (
+                            {typeof image === 'object' && image?.url && (
                               <Image
-                                alt={image?.alt || product?.title || ''}
+                                alt={typeof image === 'object' ? (image?.alt || (typeof product === 'object' ? product?.title : '')) : ''}
                                 className="h-full w-full object-cover"
                                 height={94}
                                 src={image.url}
@@ -125,7 +125,7 @@ export function CartModal() {
                           </div>
 
                           <div className="flex flex-1 flex-col text-base">
-                            <span className="leading-tight">{product?.title}</span>
+                            <span className="leading-tight">{typeof product === 'object' ? product?.title : ''}</span>
                             {isVariant && variant ? (
                               <p className="text-sm text-neutral-500 dark:text-neutral-400 capitalize">
                                 {variant.options

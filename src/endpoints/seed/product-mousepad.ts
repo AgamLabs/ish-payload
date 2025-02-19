@@ -1,6 +1,6 @@
 import type { Product } from '@/payload-types'
 
-export const productMousepad: Partial<Product> = {
+export const productMousepad: Partial<Product> & { gallery: unknown[], categories: unknown[] } = {
   variants: {
     options: [],
     variants: [],
@@ -8,7 +8,7 @@ export const productMousepad: Partial<Product> = {
   stock: 64,
   meta: {
     title: 'Mouse pad | Payload Ecommerce Template',
-    image: '{{IMAGE_1}}',
+    image: '{{IMAGE_1}}' as unknown as number,
     description:
       'Upgrade your workspace with our premium mousepad, designed for precision and comfort. Made with the best materials on the market.',
   },
@@ -46,8 +46,9 @@ export const productMousepad: Partial<Product> = {
       version: 1,
     },
   },
-  gallery: ['{{IMAGE_1}}', '{{IMAGE_2}}', '{{IMAGE_3}}'],
-  categories: ['{{CATEGORY_1}}'],
+  gallery: ['{{IMAGE_1}}', '{{IMAGE_2}}', '{{IMAGE_3}}'].map(img => img as unknown as number),
+  categories: ['{{CATEGORY_1}}' as unknown as number],
   price: 2999,
   title: 'Mouse pad',
+  slug: 'mouse-pad'
 }

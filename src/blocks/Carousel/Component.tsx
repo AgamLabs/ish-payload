@@ -21,7 +21,7 @@ export const CarouselBlock: React.FC<
     const flattenedCategories = categories?.length
       ? categories.map((category) => {
           if (typeof category === 'string') return category
-          else return category.id
+          else return typeof category === 'object' ? category.id : category
         })
       : null
 
