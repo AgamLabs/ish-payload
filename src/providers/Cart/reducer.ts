@@ -47,14 +47,16 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
         ...(incomingCart?.items || []),
       ].reduce((acc: CartItem[], item) => {
         // remove duplicates
-        const productId =
-          item.id /* typeof item.product === 'string' ? item.product : item?.cproduct?.id */
+        if (!item?.product) return acc
+        const productId = typeof item.product === 'string' ? item.product : (typeof item.product === 'object' && 'id' in item.product ? item.product.id : null)
+        if (!productId) return acc
 
-        const indexInAcc = acc.findIndex(
-          ({ id }) =>
-            /* typeof product === 'string' ? product === productId : product?.id === productId, */
-            id === productId,
-        )  
+        const indexInAcc = acc.findIndex(({ product }) => {
+          if (!product) return false
+          return typeof product === 'string' 
+            ? product === productId 
+            : (typeof product === 'object' && 'id' in product) ? product.id === productId : false
+        })
 
         if (indexInAcc > -1) {
           acc[indexInAcc] = {
@@ -63,7 +65,17 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
             // quantity: acc[indexInAcc].quantity + item.quantity
           }
         } else {
-          acc.push(item)
+          const productId = typeof item.product === 'number'
+            ? item.product
+            : typeof item.product === 'object' && 'id' in item.product
+              ? item.product.id
+              : null
+          if (productId) {
+            acc.push({
+              ...item,
+              product: productId
+            })
+          }
         }
         return acc
       }, [])
@@ -75,30 +87,59 @@ export const cartReducer = (cart: CartType, action: CartAction): CartType => {
     }
 
     case 'ADD_ITEM': {
+      console.log('Cart reducer: Adding item', action.payload);
       // if the item is already in the cart, increase the quantity
-      const { payload: incomingItem } = action
+      const { payload } = action
+      if (!payload.product) {
+        console.log('Cart reducer: No product in incoming item');
+        return cart;
+      }
+
+      // Get the product ID, whether it's passed as a number or a Product object
+      // If product is already a full Product object, use it as is
+      // Otherwise, just use the ID and let the cart provider fetch the details
+      const incomingItem = {
+        ...payload,
+        product: typeof payload.product === 'object' && 'title' in payload.product
+          ? payload.product
+          : payload.product
+      }
+
       if (!incomingItem.product) return cart
-
-      const productId =
-        typeof incomingItem.product === 'string' ? incomingItem.product : (typeof incomingItem.product === 'object' && 'id' in incomingItem.product ? incomingItem.product.id : null)
-
-      if (!productId) return cart
 
       const indexInCart = cart?.items?.findIndex(({ product, variant }) => {
         if (!product) return false
+        
+        // Get the ID of the item in cart
+        const itemProductId = typeof product === 'number'
+          ? product
+          : typeof product === 'object' && 'id' in product
+            ? product.id
+            : null
+
+        if (!itemProductId) return false
+
+        // Get the ID of the incoming item
+        const incomingProductId = typeof incomingItem.product === 'number'
+          ? incomingItem.product
+          : typeof incomingItem.product === 'object' && 'id' in incomingItem.product
+            ? incomingItem.product.id
+            : null
+        
         if (incomingItem.variant) {
-          return variant === incomingItem.variant
+          return variant === incomingItem.variant && itemProductId === incomingProductId
         } else {
-          return typeof product === 'string' 
-            ? product === productId 
-            : (typeof product === 'object' && 'id' in product) ? product.id === productId : false
+          return itemProductId === incomingProductId
         }
-      })  
+      })
 
       const withAddedItem = [...(cart?.items || [])]
 
       if (indexInCart === -1) {
-        withAddedItem.push(incomingItem)
+        withAddedItem.push({
+          ...incomingItem,
+          product: incomingItem.product // Keep the full product object if available
+        })
       }
 
       if (typeof indexInCart === 'number' && indexInCart > -1) {

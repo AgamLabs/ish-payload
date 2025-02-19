@@ -33,8 +33,10 @@ export function CartModal() {
   const pathname = usePathname()
 
   useEffect(() => {
+    console.log('Cart modal: quantity changed', { cartQuantity, current: quantityRef.current });
     // Open cart modal when quantity changes.
     if (cartQuantity !== quantityRef.current) {
+      console.log('Cart modal: opening modal');
       // But only if it's not already open (quantity also changes when editing items in cart).
       if (!isOpen && pathname !== '/checkout') {
         setIsOpen(true)

@@ -43,7 +43,7 @@ export function AddToCart({ product, variants }: Props) {
   }, [product.slug, selectedVariantId, variants])
 
   const addToCart = useCallback(
-    (e: React.FormEvent<HTMLButtonElement>) => {
+    async (e: React.FormEvent<HTMLButtonElement>) => {
       e.preventDefault()
 
       let unitPrice = product.price || 0
@@ -55,18 +55,18 @@ export function AddToCart({ product, variants }: Props) {
         unitPrice = variant?.price || 0
       }
 
-      console.log({
-        id: selectedVariantId ?? product.id,
-        product,
+      console.log('Adding item to cart:', {
+        id: String(selectedVariantId ?? product.id),
+        product: product.id,
         quantity: 1,
         url: productUrl,
         unitPrice,
         variant: selectedVariantId ?? undefined,
-      })
-
-      addItemToCart({
+      });
+      
+      await addItemToCart({
         id: String(selectedVariantId ?? product.id),
-        product,
+        product: product.id,
         quantity: 1,
         url: productUrl,
         unitPrice,

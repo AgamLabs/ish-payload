@@ -18,7 +18,7 @@ import { useAuth } from '../Auth'
 import { cartReducer } from './reducer'
 
 export type CartContext = {
-  addItemToCart: (item: CartItem) => void
+  addItemToCart: (item: CartItem) => Promise<void>
   cart: User['cart']
   cartIsEmpty: boolean | undefined
   cartQuantity: number
@@ -44,25 +44,54 @@ const arrayHasItems = (array) => Array.isArray(array) && array.length > 0
  * ensure that cart items are fully populated, filter out any items that are not
  * this will prevent discontinued products from appearing in the cart
  */
-const flattenCart = (cart: User['cart']): User['cart'] => ({
-  ...cart,
-  items: cart?.items
-    ?.map((item) => {
-      if (!item?.product) {
-        return null
-      }
+const flattenCart = async (cart: User['cart']): Promise<User['cart']> => {
+  if (!cart?.items?.length) return cart
 
-      return {
-        ...item,
-        // flatten relationship to product
-        product: typeof item.product === 'string' ? item.product : (typeof item.product === 'object' && 'id' in item.product ? item.product.id : item.product),
-        variantID: item?.variant,
-        quantity: typeof item?.quantity === 'number' ? item?.quantity : 0,
-        variant: item?.variant,
-      }
+  // Get all product IDs
+  const productIds = cart.items
+    .map(item => {
+      if (!item?.product) return null
+      return typeof item.product === 'number'
+        ? item.product
+        : typeof item.product === 'object' && 'id' in item.product
+          ? item.product.id
+          : null
     })
-    .filter(Boolean) as CartItem[],
-})
+    .filter(Boolean) as number[]
+
+  // Fetch all products
+  const productsResponse = await fetch(`/api/products?where[id][in]=${productIds.join(',')}`)
+  const products = await productsResponse.json()
+  const productsById = products.docs.reduce((acc: Record<string, Product>, product: Product) => {
+    acc[product.id] = product
+    return acc
+  }, {})
+
+  return {
+    ...cart,
+    items: cart.items
+      .map((item) => {
+        if (!item?.product) return null
+
+        const productId = typeof item.product === 'number'
+          ? item.product
+          : typeof item.product === 'object' && 'id' in item.product
+            ? item.product.id
+            : null
+
+        if (!productId || !productsById[productId]) return null
+
+        return {
+          ...item,
+          product: productsById[productId],
+          variantID: item?.variant,
+          quantity: typeof item?.quantity === 'number' ? item?.quantity : 0,
+          variant: item?.variant,
+        }
+      })
+      .filter(Boolean) as CartItem[],
+  }
+}
 
 // Step 1: Check local storage for a cart
 // Step 2: If there is a cart, fetch the products and hydrate the cart
@@ -101,14 +130,51 @@ export const CartProvider = (props) => {
 
       const syncCartFromLocalStorage = async () => {
         const localCart = localStorage.getItem('cart')
-
         const parsedCart = JSON.parse(localCart || '{}')
 
         if (parsedCart?.items && parsedCart?.items?.length > 0) {
+          // Get all product IDs
+          const productIds = parsedCart.items
+            .map(item => {
+              if (!item?.product) return null
+              return typeof item.product === 'number'
+                ? item.product
+                : typeof item.product === 'object' && 'id' in item.product
+                  ? item.product.id
+                  : null
+            })
+            .filter(Boolean)
+
+          // Fetch all products
+          const productsResponse = await fetch(`/api/products?where[id][in]=${productIds.join(',')}`)
+          const products = await productsResponse.json()
+          const productsById = products.docs.reduce((acc, product) => {
+            acc[product.id] = product
+            return acc
+          }, {})
+
+          // Update cart items with full product details
+          const updatedItems = parsedCart.items.map(item => {
+            if (!item?.product) return item
+
+            const productId = typeof item.product === 'number'
+              ? item.product
+              : typeof item.product === 'object' && 'id' in item.product
+                ? item.product.id
+                : null
+
+            if (!productId || !productsById[productId]) return item
+
+            return {
+              ...item,
+              product: productsById[productId]
+            }
+          })
+
           dispatchCart({
             type: 'SET_CART',
             payload: {
-              items: parsedCart.items,
+              items: updatedItems,
             },
           })
         } else {
@@ -130,12 +196,62 @@ export const CartProvider = (props) => {
   useEffect(() => {
     if (!hasInitialized.current) return
 
-    if (authStatus === 'loggedIn') {
-      // merge the user's cart with the local state upon logging in
-      dispatchCart({
-        type: 'MERGE_CART',
-        payload: user?.cart,
-      })
+    if (authStatus === 'loggedIn' && user?.cart?.items && user.cart.items.length > 0) {
+      const mergeUserCart = async () => {
+        const userCart = user.cart
+        if (!userCart?.items) return
+
+        // Get all product IDs from user's cart
+        const productIds = userCart.items
+          .map(item => {
+            if (!item?.product) return null
+            return typeof item.product === 'number'
+              ? item.product
+              : typeof item.product === 'object' && 'id' in item.product
+                ? item.product.id
+                : null
+          })
+          .filter(Boolean)
+
+        if (productIds.length === 0) return
+
+        // Fetch all products
+        const productsResponse = await fetch(`/api/products?where[id][in]=${productIds.join(',')}`)
+        const products = await productsResponse.json()
+        const productsById = products.docs.reduce((acc, product) => {
+          acc[product.id] = product
+          return acc
+        }, {})
+
+        // Update cart items with full product details
+        const updatedItems = userCart.items.map(item => {
+          if (!item?.product) return item
+
+          const productId = typeof item.product === 'number'
+            ? item.product
+            : typeof item.product === 'object' && 'id' in item.product
+              ? item.product.id
+              : null
+
+          if (!productId || !productsById[productId]) return item
+
+          return {
+            ...item,
+            product: productsById[productId]
+          }
+        })
+
+        // merge the user's cart with the local state upon logging in
+        dispatchCart({
+          type: 'MERGE_CART',
+          payload: {
+            ...userCart,
+            items: updatedItems,
+          },
+        })
+      }
+
+      void mergeUserCart()
     }
 
     if (authStatus === 'loggedOut') {
@@ -152,21 +268,20 @@ export const CartProvider = (props) => {
     // wait until we have attempted authentication (the user is either an object or `null`)
     if (!hasInitialized.current || user === undefined || !cart?.items) return
 
-    const flattenedCart = flattenCart(cart)
+    // Prevent syncing if the cart hasn't actually changed
+    const prevCart = user ? user.cart : JSON.parse(localStorage.getItem('cart') || '{}')
+    if (JSON.stringify(prevCart) === JSON.stringify(cart)) {
+      setHasInitialized(true)
+      return
+    }
 
-    if (user) {
-      // prevent updating the cart when the cart hasn't changed
-      if (JSON.stringify(flattenCart(user.cart)) === JSON.stringify(flattenedCart)) {
-        setHasInitialized(true)
-        return
-      }
-
-      try {
-        const syncCartToPayload = async () => {
-          const req = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${user.id}`, {
-            // Make sure to include cookies with fetch
+    const syncCart = async () => {
+      if (user) {
+        // Sync to server
+        try {
+          await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${user.id}`, {
             body: JSON.stringify({
-              cart: flattenedCart,
+              cart,
             }),
             credentials: 'include',
             headers: {
@@ -174,21 +289,20 @@ export const CartProvider = (props) => {
             },
             method: 'PATCH',
           })
-
-          if (req.ok) {
-            localStorage.setItem('cart', '[]')
-          }
+        } catch (err) {
+          console.error(err)
         }
-
-        void syncCartToPayload()
-      } catch (_e) {
-        console.error('Error while syncing cart to Payload.')
+      } else {
+        // Sync to local storage
+        localStorage.setItem('cart', JSON.stringify(cart))
       }
-    } else {
-      localStorage.setItem('cart', JSON.stringify(cart))
+
+      setHasInitialized(true)
     }
 
-    setHasInitialized(true)
+    void syncCart()
+
+
   }, [user, cart])
 
   const isProductInCart = useCallback(
@@ -203,9 +317,13 @@ export const CartProvider = (props) => {
               return variant === variantId
             } else {
               if (!product) return false
-              return typeof product === 'string'
-                ? product === incomingProduct.id
-                : (typeof product === 'object' && 'id' in product) ? product.id === incomingProduct.id : false
+              const itemProductId = typeof product === 'number'
+                ? product
+                : typeof product === 'object' && 'id' in product
+                  ? product.id
+                  : null
+                    
+              return itemProductId === incomingProduct.id
             }
           }),
         )
@@ -216,10 +334,20 @@ export const CartProvider = (props) => {
   )
 
   // this method can be used to add new items AND update existing ones
-  const addItemToCart = useCallback((incomingItem: CartItem) => {
+  const addItemToCart = useCallback(async (incomingItem: CartItem) => {
+    // Fetch the full product details first
+    const response = await fetch(`/api/products/${incomingItem.product}`)
+    const product = await response.json()
+
+    // Store the full product details
+    const cartItem: CartItem = {
+      ...incomingItem,
+      product, // Store the full product object for display
+    }
+
     dispatchCart({
       type: 'ADD_ITEM',
-      payload: incomingItem,
+      payload: cartItem,
     })
   }, [])
 

@@ -28,21 +28,44 @@ export const CheckoutPage: React.FC = () => {
     setError(null)
 
     try {
+      console.log('Cart items:', cart?.items)
       const orderData = {
         total: cartTotal.amount,
         currency: 'usd', // Default currency
         items: cart?.items?.reduce((acc, item) => {
-          if (item?.product && typeof item.product === 'object' && item.product.id) {
-            acc.push({
-              product: String(item.product.id),
-              quantity: item.quantity || 1,
-            });
+          if (!item?.product) return acc;
+          
+          // Create the order item with the correct relationship format
+          type OrderItem = {
+            product: {
+              relationTo: 'products';
+              value: string;
+            };
+            quantity: number;
+            variant?: string;
+          };
+
+          if (!item.product) {
+            console.error('Missing product in cart item:', item);
+            return acc;
           }
+
+          // Create order item with just the product ID
+          const orderItem = {
+            product: typeof item.product === 'object' ? item.product.id : item.product,
+            quantity: item.quantity || 1,
+            ...(item.variant ? { variant: item.variant } : {})
+          };
+
+          console.log('Created order item:', orderItem);
+
+          acc.push(orderItem);
           return acc;
-        }, [] as { product: string; quantity: number }[]) || [],
+        }, [] as { product: number; quantity: number; variant?: string }[]) || [],
         email: user?.email || email, // Use user's email if logged in, otherwise use guest email
       }
 
+      console.log('Order data:', orderData)
       const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders`, {
         method: 'POST',
         headers: {
