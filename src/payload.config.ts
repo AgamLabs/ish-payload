@@ -106,10 +106,8 @@ export default buildConfig({
         pass: process.env.SMTP_PASS,
       },
       debug: true,
-      logger: true,
-    },
-    logMock: true, // Log mock email attempts
-    logSend: true, // Log actual email attempts
+      logger: true
+    }
   }),
   endpoints: [],
   globals: [Footer, Header],

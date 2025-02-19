@@ -16,7 +16,7 @@ export const sendOrderEmails: CollectionAfterChangeHook = async ({ doc, operatio
   try {
     // Get customer email from either user account or guest email
     if (order.orderedBy) {
-      const userId = typeof order.orderedBy === 'object' && order.orderedBy !== null ? order.orderedBy.id || order.orderedBy._id : order.orderedBy
+      const userId = typeof order.orderedBy === 'object' && order.orderedBy !== null ? order.orderedBy.id : order.orderedBy
       req.payload.logger.info(`Fetching user with ID: ${userId}`)
       try {
         const customer = await req.payload.findByID({
