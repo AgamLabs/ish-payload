@@ -1,7 +1,8 @@
 import type { GenerateTitle } from '@payloadcms/plugin-seo/types'
 
 import { Page as _Page, Product as _Product } from '@/payload-types'
-import { postgresAdapter } from '@payloadcms/db-postgres'
+import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
+
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { payloadCloudPlugin as _payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { formBuilderPlugin as _formBuilderPlugin } from '@payloadcms/plugin-form-builder'
@@ -45,6 +46,15 @@ const _generateTitle: GenerateTitle = <_Page>({ doc }) => {
   return `${doc?.title ?? ''} | My Store`
 }
 
+// Use Vercel Postgres adapter with automatic configuration
+const databaseAdapter = vercelPostgresAdapter({
+  // The adapter will use process.env.POSTGRES_URL by default
+  // You can override it with your own connection string if needed
+  pool: process.env.POSTGRES_URL ? {
+    connectionString: process.env.POSTGRES_URL
+  } : undefined
+})
+
 export default buildConfig({
   admin: {
     components: {
@@ -59,11 +69,7 @@ export default buildConfig({
   },
   collections: [Users, Products, Pages, Categories, Media, Orders],
   // database-adapter-config-start
-  db: postgresAdapter({
-    pool: {
-      connectionString: process.env.POSTGRES_URI
-    }
-  }),
+  db: databaseAdapter,
   // database-adapter-config-end
   editor: lexicalEditor({
     features: () => {
