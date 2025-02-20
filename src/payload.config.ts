@@ -2,7 +2,7 @@ import type { GenerateTitle } from '@payloadcms/plugin-seo/types'
 
 import { Page as _Page, Product as _Product } from '@/payload-types'
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
-
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { payloadCloudPlugin as _payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { formBuilderPlugin as _formBuilderPlugin } from '@payloadcms/plugin-form-builder'
@@ -33,6 +33,7 @@ import { Users } from '@/collections/Users'
 import { Footer } from '@/globals/Footer'
 import { Header } from '@/globals/Header'
 import { plugins } from './plugins'
+import { vercelBlobAdapter } from './storage/vercelBlobAdapter'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -68,6 +69,7 @@ export default buildConfig({
     user: Users.slug,
   },
   collections: [Users, Products, Pages, Categories, Media, Orders],
+
   // database-adapter-config-start
   db: databaseAdapter,
   // database-adapter-config-end
@@ -121,7 +123,16 @@ export default buildConfig({
   globals: [Footer, Header],
   plugins: [
     ...plugins,
-    // storage-adapter-placeholder
+    vercelBlobStorage({
+      enabled: process.env.NODE_ENV === 'production', // Only use in production
+      collections: {
+        media: {
+          // Add prefix to organize files (optional)
+          prefix: 'media',
+        },
+      },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
   ],
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
