@@ -7,8 +7,8 @@
   "scripts": {
     "db:create": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts NODE_ENV=development payload create:db",
     "db:migrate": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate",
-    "build": "SHELL=/bin/bash cross-env NODE_OPTIONS=--no-deprecation SKIP_LINT=true next build",
-    "dev": "SHELL=/bin/bash next dev",
+    "build": "SHELL=/bin/bash cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation SKIP_LINT=true next build",
+    "dev": "SHELL=/bin/bash cross-env NODE_ENV=development next dev",
     "lint": "SHELL=/bin/bash next lint --max-warnings 0",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
@@ -17,7 +17,7 @@
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "start": "cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "latest",
@@ -27,12 +27,14 @@
     "@payloadcms/live-preview-react": "latest",
     "@payloadcms/next": "latest",
     "@payloadcms/payload-cloud": "latest",
+    "@payloadcms/plugin-cloud-storage": "3.23.0",
     "@payloadcms/plugin-form-builder": "latest",
     "@payloadcms/plugin-nested-docs": "latest",
     "@payloadcms/plugin-redirects": "latest",
     "@payloadcms/plugin-search": "latest",
     "@payloadcms/plugin-seo": "latest",
     "@payloadcms/richtext-lexical": "latest",
+    "@payloadcms/storage-vercel-blob": "3.23.0",
     "@payloadcms/translations": "latest",
     "@payloadcms/ui": "latest",
     "@radix-ui/react-checkbox": "^1.0.4",
@@ -40,6 +42,7 @@
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-select": "^2.0.0",
     "@radix-ui/react-slot": "^1.0.2",
+    "@vercel/blob": "^0.27.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "dotenv": "^8.2.0",
