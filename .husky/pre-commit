@@ -1,5 +1,5 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# Add node bin to PATH
+export PATH="/home/nandha/.config/nvm/versions/node/v23.6.1/bin:$PATH"
 
 # Run type checking
 pnpm tsc --noEmit

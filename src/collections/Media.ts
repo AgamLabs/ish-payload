@@ -32,9 +32,9 @@ export const Media: CollectionConfig = {
       }),
     },
   ],
-  upload: process.env.NODE_ENV === 'production'
-    ? true // In production, use Vercel Blob storage
-    : {
-      staticDir: path.resolve(dirname, '../../public/media'), // In development, use local storage
-    },
+  upload: {
+    staticDir: process.env.NODE_ENV === 'production'
+      ? undefined // In production, use Vercel Blob storage
+      : path.resolve(dirname, '../../public/media'), // In development, use local storage
+  },
 }

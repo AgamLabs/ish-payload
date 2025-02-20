@@ -77,3 +77,4 @@ tmp/
 temp/
 src/test-smtp-verbose.js
 src/test-smtp.js
+tsconfig.tsbuildinfo
