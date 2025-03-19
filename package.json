@@ -8,9 +8,9 @@
     "prepare": "husky",
     "db:create": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts NODE_ENV=development payload create:db",
     "db:migrate": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate",
-    "build": "SHELL=/bin/bash cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation SKIP_LINT=true next build",
-    "dev": "SHELL=/bin/bash cross-env NODE_ENV=development next dev",
-    "lint": "SHELL=/bin/bash next lint --max-warnings 0",
+    "build": "cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation SKIP_LINT=true next build",
+    "dev": "cross-env NODE_ENV=development next dev",
+    "lint": "next lint --max-warnings 0",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
@@ -18,8 +18,7 @@
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
-    "start": "cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation next start",
-    "prepare": "husky"
+    "start": "cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "latest",
