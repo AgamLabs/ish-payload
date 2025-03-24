@@ -15,7 +15,7 @@ export default async function CreateAccount() {
   })
 
   return (
-    <div className="container">
+    <div className="container w-full h-screen">
       <h1 className="text-xl mb-4">Create Account</h1>
       <RenderParams />
       <CreateAccountForm />
