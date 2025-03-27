@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const VERCEL_BLOB_URL = process.env.VERCEL_BLOB_URL;
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -34,7 +35,7 @@ export const Media: CollectionConfig = {
   ],
   upload: {
     staticDir: process.env.NODE_ENV === 'production'
-      ? undefined // In production, use Vercel Blob storage
+      ? VERCEL_BLOB_URL // In production, use Vercel Blob storage
       : path.resolve(dirname, '../../public/media'), // In development, use local storage
   },
 }
