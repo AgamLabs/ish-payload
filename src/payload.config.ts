@@ -1,66 +1,68 @@
-import type { GenerateTitle } from '@payloadcms/plugin-seo/types'
+import type { GenerateTitle } from "@payloadcms/plugin-seo/types";
 
-import { Page as _Page, Product as _Product } from '@/payload-types'
-import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres'
-import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
-import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
-import { payloadCloudPlugin as _payloadCloudPlugin } from '@payloadcms/payload-cloud'
-import { formBuilderPlugin as _formBuilderPlugin } from '@payloadcms/plugin-form-builder'
-import { nestedDocsPlugin as _nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
-import { redirectsPlugin as _redirectsPlugin } from '@payloadcms/plugin-redirects'
-import { seoPlugin as _seoPlugin } from '@payloadcms/plugin-seo'
+import { Page as _Page, Product as _Product } from "@/payload-types";
+import { vercelPostgresAdapter } from "@payloadcms/db-vercel-postgres";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
+import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
+import { payloadCloudPlugin as _payloadCloudPlugin } from "@payloadcms/payload-cloud";
+import { formBuilderPlugin as _formBuilderPlugin } from "@payloadcms/plugin-form-builder";
+import { nestedDocsPlugin as _nestedDocsPlugin } from "@payloadcms/plugin-nested-docs";
+import { redirectsPlugin as _redirectsPlugin } from "@payloadcms/plugin-redirects";
+import { seoPlugin as _seoPlugin } from "@payloadcms/plugin-seo";
 import {
   BoldFeature,
   ItalicFeature,
   LinkFeature,
   UnderlineFeature,
   lexicalEditor,
-} from '@payloadcms/richtext-lexical'
-import path from 'path'
-import { buildConfig } from 'payload'
+} from "@payloadcms/richtext-lexical";
+import path from "path";
+import { buildConfig } from "payload";
 // import sharp from 'sharp'
-import { fileURLToPath } from 'url'
+import { fileURLToPath } from "url";
 
 // Increase max listeners to prevent warning
-process.setMaxListeners(20)
+process.setMaxListeners(20);
 
-import { Categories } from '@/collections/Categories'
-import { Media } from '@/collections/Media'
-import { Orders } from '@/collections/Orders'
-import { Pages } from '@/collections/Pages'
-import { Products } from '@/collections/Products'
-import { Users } from '@/collections/Users'
-import { Footer } from '@/globals/Footer'
-import { Header } from '@/globals/Header'
-import { plugins } from './plugins'
+import { Categories } from "@/collections/Categories";
+import { Media } from "@/collections/Media";
+import { Orders } from "@/collections/Orders";
+import { Pages } from "@/collections/Pages";
+import { Products } from "@/collections/Products";
+import { Users } from "@/collections/Users";
+import { Footer } from "@/globals/Footer";
+import { Header } from "@/globals/Header";
+import { plugins } from "./plugins";
 
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 
 export type GenerateTitle2<T = unknown> = (args: {
-  doc: T
-  locale?: string
-}) => Promise<string> | string
+  doc: T;
+  locale?: string;
+}) => Promise<string> | string;
 
 const _generateTitle: GenerateTitle = <_Page>({ doc }) => {
-  return `${doc?.title ?? ''} | My Store`
-}
+  return `${doc?.title ?? ""} | My Store`;
+};
 
 // Use Vercel Postgres adapter with automatic configuration
 const databaseAdapter = vercelPostgresAdapter({
   // The adapter will use process.env.POSTGRES_URL by default
   // You can override it with your own connection string if needed
-  pool: process.env.POSTGRES_URL ? {
-    connectionString: process.env.POSTGRES_URL
-  } : undefined
-})
+  pool: process.env.POSTGRES_URL
+    ? {
+        connectionString: process.env.POSTGRES_URL,
+      }
+    : undefined,
+});
 
 export default buildConfig({
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeLogin` statement on line 15.
-      beforeLogin: ['@/components/BeforeLogin#BeforeLogin'],
+      beforeLogin: ["@/components/BeforeLogin#BeforeLogin"],
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
       // beforeDashboard: ['@/components/BeforeDashboard#BeforeDashboard'],
@@ -79,28 +81,28 @@ export default buildConfig({
         BoldFeature(),
         ItalicFeature(),
         LinkFeature({
-          enabledCollections: ['pages'],
+          enabledCollections: ["pages"],
           fields: ({ defaultFields }) => {
             const defaultFieldsWithoutUrl = defaultFields.filter((field) => {
-              if ('name' in field && field.name === 'url') return false
-              return true
-            })
+              if ("name" in field && field.name === "url") return false;
+              return true;
+            });
 
             return [
               ...defaultFieldsWithoutUrl,
               {
-                name: 'url',
-                type: 'text',
+                name: "url",
+                type: "text",
                 admin: {
-                  condition: ({ linkType }) => linkType !== 'internal',
+                  condition: ({ linkType }) => linkType !== "internal",
                 },
-                label: ({ t }) => t('fields:enterURL'),
+                label: ({ t }) => t("fields:enterURL"),
                 required: true,
               },
-            ]
+            ];
           },
         }),
-      ]
+      ];
     },
   }),
   // email: nodemailerAdapter({
@@ -123,18 +125,16 @@ export default buildConfig({
   plugins: [
     ...plugins,
     vercelBlobStorage({
-      enabled: process.env.NODE_ENV === 'production', // Only use in production
+      enabled: true, // Only use in production
       collections: {
-        media: { 
-          prefix: 'media', 
-        },
+        media: true,
       },
       token: process.env.BLOB_READ_WRITE_TOKEN,
     }),
   ],
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: process.env.PAYLOAD_SECRET || "",
   typescript: {
-    outputFile: path.resolve(dirname, 'payload-types.ts'),
+    outputFile: path.resolve(dirname, "payload-types.ts"),
   },
   // Sharp is now an optional dependency -
   // if you want to resize images, crop, set focal point, etc.
@@ -144,4 +144,4 @@ export default buildConfig({
   // for this before reaching 3.0 stable
 
   // sharp,
-})
+});
