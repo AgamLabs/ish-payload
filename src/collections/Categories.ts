@@ -15,6 +15,11 @@ export const Categories: CollectionConfig = {
       required: true,
     },
     {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+    },
+    {
       name: 'slug',
       type: 'text',
       required: true,

@@ -1962,6 +1962,9 @@ export const categories = pgTable(
   {
     id: serial("id").primaryKey(),
     title: varchar("title").notNull(),
+    image: integer("image_id").references(() => media.id, {
+      onDelete: "set null",
+    }),
     slug: varchar("slug").notNull(),
     parent: integer("parent_id").references((): AnyPgColumn => categories.id, {
       onDelete: "set null",
@@ -1982,6 +1985,7 @@ export const categories = pgTable(
       .notNull(),
   },
   (columns) => ({
+    categories_image_idx: index("categories_image_idx").on(columns.image),
     categories_parent_idx: index("categories_parent_idx").on(columns.parent),
     categories_updated_at_idx: index("categories_updated_at_idx").on(
       columns.updatedAt,
@@ -3769,6 +3773,11 @@ export const relations_categories_breadcrumbs = relations(
   }),
 );
 export const relations_categories = relations(categories, ({ one, many }) => ({
+  image: one(media, {
+    fields: [categories.image],
+    references: [media.id],
+    relationName: "image",
+  }),
   parent: one(categories, {
     fields: [categories.parent],
     references: [categories.id],

@@ -526,6 +526,7 @@ export interface ArchiveBlock {
 export interface Category {
   id: number;
   title: string;
+  image?: (number | null) | Media;
   slug: string;
   parent?: (number | null) | Category;
   breadcrumbs?:
@@ -1247,6 +1248,7 @@ export interface FormBlockSelect<T extends boolean = true> {
  */
 export interface CategoriesSelect<T extends boolean = true> {
   title?: T;
+  image?: T;
   slug?: T;
   parent?: T;
   breadcrumbs?:

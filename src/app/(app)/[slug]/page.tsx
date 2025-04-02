@@ -11,6 +11,7 @@ import React from "react";
 
 import type { Page } from "@/payload-types";
 import { Gutter } from "@payloadcms/ui";
+import Categories from "@/components/Categories";
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
@@ -52,7 +53,7 @@ export default async function Page({ params }: Args) {
 
   const categories = await getCategories();
 
-  console.log(categories);
+  console.log("Categories: " + categories);
 
   if (!page) {
     return <PayloadRedirects url={url} />;
@@ -63,9 +64,12 @@ export default async function Page({ params }: Args) {
   return (
     <article className="pt-16 pb-24">
       {slug === "home" ? (
-        <Gutter>
+        <section>
           <RenderHero {...hero} />
-        </Gutter>
+          <Gutter>
+            <Categories categories={categories}/>
+          </Gutter>
+        </section>
       ) : (
         <>
           <RenderHero {...hero} />
