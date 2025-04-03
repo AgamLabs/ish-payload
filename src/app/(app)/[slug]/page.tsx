@@ -53,8 +53,6 @@ export default async function Page({ params }: Args) {
 
   const categories = await getCategories();
 
-  console.log("Categories: " + categories);
-
   if (!page) {
     return <PayloadRedirects url={url} />;
   }
