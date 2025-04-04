@@ -1,15 +1,15 @@
-import type { Media, Product } from '@/payload-types'
+import type { Media, Product } from "@/payload-types";
 
-import { RenderBlocks } from '@/blocks/RenderBlocks'
-import { GridTileImage } from '@/components/grid/tile'
-import { Gallery } from '@/components/product/Gallery'
-import { ProductDescription } from '@/components/product/ProductDescription'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import React, { Suspense } from 'react'
+import { RenderBlocks } from "@/blocks/RenderBlocks";
+import { GridTileImage } from "@/components/grid/tile";
+import { Gallery } from "@/components/product/Gallery";
+import { ProductDescription } from "@/components/product/ProductDescription";
+import configPromise from "@payload-config";
+import { getPayload } from "payload";
+import { draftMode } from "next/headers";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import React, { Suspense } from "react";
 
 /* export async function generateMetadata({
   params,
@@ -51,63 +51,68 @@ import React, { Suspense } from 'react'
 
 type Args = {
   params: Promise<{
-    slug: string
-  }>
-}
+    slug: string;
+  }>;
+};
 
 export default async function ProductPage({ params }: Args) {
-  const { slug } = await params
-  const product = await queryProductBySlug({ slug })
+  const { slug } = await params;
+  const product = await queryProductBySlug({ slug });
 
-  if (!product) return notFound()
+  if (!product) return notFound();
 
-  const variants = product.enableVariants ? product.variants?.variants : []
+  const variants = product.enableVariants ? product.variants?.variants : [];
 
-  const metaImage = typeof product.meta?.image !== 'string' ? product.meta?.image : undefined
+  const metaImage =
+    typeof product.meta?.image !== "string" ? product.meta?.image : undefined;
   const hasStock = product.enableVariants
     ? variants?.some((variant) => variant?.stock > 0)
-    : product.stock! > 0
+    : product.stock! > 0;
 
-  let price = product.price
+  let price = product.price;
 
   if (product.enableVariants && product.variants?.variants?.length) {
     price = product.variants?.variants?.reduce((acc, variant) => {
       if (variant?.price > acc) {
-        return variant.price
+        return variant.price;
       }
-      return acc
-    }, product.price || 0)
+      return acc;
+    }, product.price || 0);
   }
 
   const productJsonLd = {
     name: product.title,
-    '@context': 'https://schema.org',
-    '@type': 'Product',
+    "@context": "https://schema.org",
+    "@type": "Product",
     description: product.description,
-    image: typeof metaImage === 'object' ? metaImage?.url : undefined,
+    image: typeof metaImage === "object" ? metaImage?.url : undefined,
     offers: {
-      '@type': 'AggregateOffer',
-      availability: hasStock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      "@type": "AggregateOffer",
+      availability: hasStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
       price: price,
-      priceCurrency: 'usd',
+      priceCurrency: "usd",
     },
-  }
+  };
 
   const relatedProducts =
-    product.relatedProducts?.filter((relatedProduct) => typeof relatedProduct !== 'string') ?? []
+    product.relatedProducts?.filter(
+      (relatedProduct) => typeof relatedProduct !== "string"
+    ) ?? [];
 
-  const gallery = product.gallery?.filter((image) => typeof image !== 'string')
+  const gallery = product.gallery?.filter((image) => typeof image !== "string");
 
   if (variants?.length) {
     variants.forEach((variant) => {
       if (variant?.images?.length) {
         variant.images.forEach((image) => {
-          if (typeof image !== 'string') {
-            gallery?.push(image)
+          if (typeof image !== "string") {
+            gallery?.push(image);
           }
-        })
+        });
       }
-    })
+    });
   }
 
   return (
@@ -126,7 +131,13 @@ export default async function ProductPage({ params }: Args) {
                 <div className="relative aspect-square h-full max-h-[550px] w-full overflow-hidden" />
               }
             >
-              {gallery?.length && <Gallery images={gallery.filter((item): item is Media => typeof item === 'object')} />}
+              {gallery?.length && (
+                <Gallery
+                  images={gallery.filter(
+                    (item): item is Media => typeof item === "object"
+                  )}
+                />
+              )}
             </Suspense>
           </div>
 
@@ -146,11 +157,11 @@ export default async function ProductPage({ params }: Args) {
         <></>
       )}
     </React.Fragment>
-  )
+  );
 }
 
 function RelatedProducts({ products }: { products: Product[] }) {
-  if (!products.length) return null
+  if (!products.length) return null;
 
   return (
     <div className="py-8">
@@ -161,11 +172,14 @@ function RelatedProducts({ products }: { products: Product[] }) {
             className="aspect-square w-full flex-none min-[475px]:w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5"
             key={product.id}
           >
-            <Link className="relative h-full w-full" href={`/product/${product.slug}`}>
+            <Link
+              className="relative h-full w-full"
+              href={`/product/${product.slug}`}
+            >
               <GridTileImage
                 label={{
                   amount: product.price!,
-                  currencyCode: 'usd',
+                  currencyCode: "usd",
                   title: product.title,
                 }}
                 media={product.meta?.image as Media}
@@ -175,16 +189,16 @@ function RelatedProducts({ products }: { products: Product[] }) {
         ))}
       </ul>
     </div>
-  )
+  );
 }
 
 const queryProductBySlug = async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
+  const { isEnabled: draft } = await draftMode();
 
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
 
   const result = await payload.find({
-    collection: 'products',
+    collection: "products",
     depth: 2,
     draft,
     limit: 1,
@@ -194,7 +208,7 @@ const queryProductBySlug = async ({ slug }: { slug: string }) => {
         equals: slug,
       },
     },
-  })
+  });
 
-  return result.docs?.[0] || null
-}
+  return result.docs?.[0] || null;
+};

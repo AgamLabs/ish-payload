@@ -12,6 +12,7 @@ import React from "react";
 import type { Page } from "@/payload-types";
 import { Gutter } from "@payloadcms/ui";
 import Categories from "@/components/Categories";
+import Promotion from "@/components/Promotion";
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
@@ -64,8 +65,9 @@ export default async function Page({ params }: Args) {
       {slug === "home" ? (
         <section>
           <RenderHero {...hero} />
-          <Gutter>
-            <Categories categories={categories}/>
+          <Gutter className="flex flex-col gap-[100px] md:gap-14 mt-[100px];">
+            <Categories categories={categories} />
+            <Promotion />
           </Gutter>
         </section>
       ) : (
