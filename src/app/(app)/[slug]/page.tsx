@@ -17,6 +17,8 @@ import Section3 from "@/components/ISH/Section3";
 import Section4 from "@/components/ISH/Section4";
 import Section5 from "@/components/ISH/Section5";
 import Section6 from "@/components/ISH/Section6";
+import Section7 from "@/components/ISH/Section7";
+import Section8 from "@/components/ISH/Section8";
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
@@ -70,10 +72,12 @@ export default async function Page({ params }: Args) {
         <section>
           <RenderHero {...hero} />
           <Categories categories={categories} />
-          <Section3/>
-          <Section4/>
-          <Section5/>
-          <Section6/>
+          <Section3 />
+          <Section4 />
+          <Section5 />
+          <Section6 />
+          <Section7 />
+          <Section8 />
         </section>
       ) : (
         <>
