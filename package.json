@@ -21,6 +21,10 @@
     "start": "cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.0.1",
+    "@mui/material": "^7.0.1",
     "@payloadcms/db-mongodb": "latest",
     "@payloadcms/db-postgres": "^3.23.0",
     "@payloadcms/db-vercel-postgres": "^3.23.0",
@@ -54,7 +58,7 @@
     "jsonwebtoken": "9.0.1",
     "juice": "^9.1.0",
     "lucide-react": "^0.378.0",
-    "next": "^15.1.0",
+    "next": "^15.2.4",
     "nodemailer": "6.9.10",
     "payload": "latest",
     "payload-admin-bar": "^1.0.6",
@@ -63,6 +67,7 @@
     "qs-esm": "^7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-fast-marquee": "^1.6.5",
     "react-hook-form": "7.45.4",
     "sharp": "0.32.6",
     "tailwind-merge": "^2.3.0",

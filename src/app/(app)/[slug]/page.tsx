@@ -13,6 +13,10 @@ import type { Page } from "@/payload-types";
 import { Gutter } from "@payloadcms/ui";
 import Categories from "@/components/Categories";
 import Promotion from "@/components/Promotion";
+import Section3 from "@/components/ISH/Section3";
+import Section4 from "@/components/ISH/Section4";
+import Section5 from "@/components/ISH/Section5";
+import Section6 from "@/components/ISH/Section6";
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
@@ -61,14 +65,15 @@ export default async function Page({ params }: Args) {
   const { hero, layout } = page;
 
   return (
-    <article className="pt-16 pb-24">
+    <article className="pt-16 pb-24 bg-backgroundgray">
       {slug === "home" ? (
         <section>
           <RenderHero {...hero} />
-          <Gutter className="flex flex-col gap-[100px] md:gap-14 mt-[100px];">
-            <Categories categories={categories} />
-            <Promotion />
-          </Gutter>
+          <Categories categories={categories} />
+          <Section3/>
+          <Section4/>
+          <Section5/>
+          <Section6/>
         </section>
       ) : (
         <>

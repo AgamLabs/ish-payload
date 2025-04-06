@@ -84,6 +84,23 @@ export default {
         success: "hsl(var(--success))",
         error: "hsl(var(--error))",
         warning: "hsl(var(--warning))",
+        customBlue: '#00416A',
+        trueGray:"#3D3D3D",
+        trueGraysub:"#666666",
+        backgroundgray:'#E7E7E3',
+        grayfortext:"#B9B9B9",
+        grayforbottomtext:'#404040',
+        background:"#C0C0C0",
+        bgdot:'#A6A6A6',
+        textcol:'#222222',
+        bottext:'#142029',
+        bluetext:'#014CA0',
+        linecolor:"#CACACA",
+        textcolor:"#7B7B7B",
+        ptext:'#414141',
+        ptit:'#2D2D2D',
+        pbtext:'#282828',
+        pdtext:'#696969'
       },
       typography: ({ theme }) => ({
         DEFAULT: {
@@ -102,8 +119,10 @@ export default {
         },
       }),
       fontFamily: {
-        mono: ["var(--font-geist-mono)"],
-        sans: ["var(--font-geist-sans)"],
+        exo: ['Exo', 'sans-serif'],
+        oxygen: ['Oxygen', 'sans-serif'],
+        roboto: ['Roboto' , 'sans-serif'],
+        poppins:['Poppins' , 'sans-serif ']
       },
       keyframes: {
         fadeIn: {
