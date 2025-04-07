@@ -72,7 +72,7 @@ const Section4 = () => {
         {images.map((ele) => {
           return (
             <Link
-              href={`/ProductDetails/${ele.link}`}
+              href={`/search/${ele.link}`}
               className=" mx-auto hover:scale-110"
               key={1}
             >
