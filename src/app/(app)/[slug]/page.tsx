@@ -68,7 +68,7 @@ export default async function Page({ params }: Args) {
 
   return (
     <article className="pt-16 pb-24 bg-backgroundgray">
-      {slug === "home" ? (
+      {/* {slug === "home" ? (
         <section>
           <RenderHero {...hero} />
           <Categories categories={categories} />
@@ -79,12 +79,13 @@ export default async function Page({ params }: Args) {
           <Section7 />
           <Section8 />
         </section>
-      ) : (
+      ) : ( */}
+      {
         <>
           <RenderHero {...hero} />
           <RenderBlocks blocks={layout} />
         </>
-      )}
+      }
     </article>
   );
 }
