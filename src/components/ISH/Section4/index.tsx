@@ -74,7 +74,7 @@ const Section4 = () => {
             <Link
               href={`/search/${ele.link}`}
               className=" mx-auto hover:scale-110"
-              key={1}
+              key={ele.name}
             >
               <div className="flex flex-col mx-auto mb-5">
                 <div className="relative w-[155px] h-[155px] sm:w-[270px] sm:h-[260px] mb-3">
