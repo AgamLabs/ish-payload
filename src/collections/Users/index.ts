@@ -18,7 +18,7 @@ export const Users: CollectionConfig = {
     update: adminsAndUser,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'roles'],
+    defaultColumns: ['name', 'email', 'roles', 'phone'],
     useAsTitle: 'name',
   },
   auth: {
@@ -141,6 +141,12 @@ export const Users: CollectionConfig = {
         },
       ],
       label: 'Cart',
+    },
+    {
+      name: 'phone',
+      type: 'text',
+      label: 'Phone Number',
+      required: false, // Set to false if not required
     },
   ],
   timestamps: true,

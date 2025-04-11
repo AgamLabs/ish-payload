@@ -167,6 +167,7 @@ export interface User {
   cart?: {
     items?: CartItems;
   };
+  phone?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -981,6 +982,7 @@ export interface UsersSelect<T extends boolean = true> {
     | {
         items?: T | CartItemsSelect<T>;
       };
+  phone?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

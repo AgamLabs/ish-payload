@@ -131,9 +131,6 @@ importers:
       payload-admin-bar:
         specifier: ^1.0.6
         version: 1.0.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      pg:
-        specifier: ^8.13.3
-        version: 8.13.3
       prism-react-renderer:
         specifier: ^2.3.1
         version: 2.4.1(react@19.0.0)
@@ -207,6 +204,9 @@ importers:
       lint-staged:
         specifier: ^15.4.3
         version: 15.4.3
+      pg:
+        specifier: ^8.13.3
+        version: 8.13.3
       postcss:
         specifier: ^8.4.38
         version: 8.5.2

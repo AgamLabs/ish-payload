@@ -61,7 +61,7 @@ const Section4 = () => {
         </div>
         <div className=" md:my-auto max-md:absolute max-md:right-2 max-md:mt-3">
           <Link
-            href="/Products"
+            href="/search"
             className=" px-4 py-3 bg-customBlue rounded-3xl text-grayfortext font-exo font-semibold"
           >
             View All <ArrowForwardIosTwoTone fontSize="small" />
