@@ -10,9 +10,7 @@ import { draftMode } from "next/headers";
 import React from "react";
 
 import type { Page } from "@/payload-types";
-import { Gutter } from "@payloadcms/ui";
 import Categories from "@/components/Categories";
-import Promotion from "@/components/Promotion";
 import Section3 from "@/components/ISH/Section3";
 import Section4 from "@/components/ISH/Section4";
 import Section5 from "@/components/ISH/Section5";
@@ -123,7 +121,14 @@ async function getCategories() {
   const payload = await getPayload({ config: configPromise });
   const categories = await payload.find({
     collection: "categories",
+    where: {
+      // This assumes your parent categories either have no parent field
+      // or the parent field is explicitly set to null
+      parent: { equals: null },
+    },
   });
+
+  // console.log(categories);
 
   return categories.docs || null;
 }

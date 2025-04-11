@@ -5,50 +5,29 @@ import {
 } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
+import configPromise from "@payload-config";
+import { getPayload } from "payload";
+import { Media, Product } from "@/payload-types";
 
-const Section4 = () => {
-  const images = [
-    {
-      name: "HRPO Coils",
-      loc: "image-hero1-1.webp",
-      link: "3",
+async function getPopularProducts(): Promise<Product[]> {
+  const payload = await getPayload({ config: configPromise });
+  const popularProducts = await payload.find({
+    collection: "products",
+    where: {
+      // Your filtering criteria
+      _status: { equals: "published" },
     },
-    {
-      name: "ZM Sheets",
-      loc: "image-hero1-1.webp",
-      link: "21",
-    },
-    {
-      name: "GI Coils",
-      loc: "image-hero1-1.webp",
-      link: "8",
-    },
-    {
-      name: "GI Sheets",
-      loc: "image-hero1-1.webp",
-      link: "11",
-    },
-    {
-      name: "GA Sheets",
-      loc: "image-hero1-1.webp",
-      link: "19",
-    },
-    {
-      name: "PPGI Sheets",
-      loc: "image-hero1-1.webp",
-      link: "15",
-    },
-    {
-      name: "PPGL Sheets",
-      loc: "image-hero1-1.webp",
-      link: "17",
-    },
-    {
-      name: "BGL Sheet",
-      loc: "image-hero1-1.webp",
-      link: "13",
-    },
-  ];
+    limit: 8,
+  });
+
+  // console.log(popularProducts);
+
+  return popularProducts.docs || null;
+}
+
+const Section4 = async () => {
+
+  const products = await getPopularProducts();
 
   return (
     <div className="py-10 px-3 font-oxygen">
@@ -69,25 +48,27 @@ const Section4 = () => {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-10 max-md:gap-3 max-xl:gap-20 xl:grid-cols-4  py-20 ">
-        {images.map((ele) => {
+        {products.map((prd: Product) => {
+          const img = prd.gallery as Media[];
+          const imageSrc = img[0]?.url || "/media/image-hero1-1.webp";
           return (
             <Link
-              href={`/search/${ele.link}`}
+              href={`/search/${prd.id}`}
               className=" mx-auto hover:scale-110"
-              key={ele.name}
+              key={prd.id}
             >
               <div className="flex flex-col mx-auto mb-5">
                 <div className="relative w-[155px] h-[155px] sm:w-[270px] sm:h-[260px] mb-3">
                   <Image
                     className="rounded-xl"
-                    src={`/media/${ele.loc}`}
-                    alt="hot rolled coil Image"
+                    src={imageSrc}
+                    alt={prd.title}
                     fill
                   />
                 </div>
                 <div>
                   <h1 className=" text-center sm:text-[22px]  text-grayforbottomtext">
-                    {ele.name}
+                    {prd.title}
                   </h1>
                   <div className=" flex justify-between px-1"></div>
                 </div>

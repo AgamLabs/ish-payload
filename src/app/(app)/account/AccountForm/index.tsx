@@ -85,7 +85,7 @@ export const AccountForm: React.FC = () => {
   );
 
   useEffect(() => {
-    console.log('Current user:', user); // Add this line
+    // console.log('Current user:', user); // Add this line
     if (user === null) {
       router.push(
         `/login?error=${encodeURIComponent(
