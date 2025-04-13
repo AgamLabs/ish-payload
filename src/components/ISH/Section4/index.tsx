@@ -26,7 +26,6 @@ async function getPopularProducts(): Promise<Product[]> {
 }
 
 const Section4 = async () => {
-
   const products = await getPopularProducts();
 
   return (
@@ -53,7 +52,7 @@ const Section4 = async () => {
           const imageSrc = img[0]?.url || "/media/image-hero1-1.webp";
           return (
             <Link
-              href={`/search/${prd.id}`}
+              href={`/products/${prd.slug}`}
               className=" mx-auto hover:scale-110"
               key={prd.id}
             >

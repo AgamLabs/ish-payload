@@ -48,13 +48,13 @@ export function ProductDescription({ product }: { product: Product }) {
         <VariantSelector product={product} />
       </Suspense>
 
-      {product.description ? (
-        <RichText className="mb-6" data={product.description} enableGutter={false} />
-      ) : null}
-
       <Suspense fallback={null}>
         <AddToCart product={product} variants={product.variants?.variants || []} />
       </Suspense>
+
+      {product.description ? (
+        <RichText className="mb-6" data={product.description} enableGutter={false} />
+      ) : null}
     </React.Fragment>
   )
 }

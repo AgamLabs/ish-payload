@@ -39,7 +39,7 @@ export const CustomHero: React.FC<Page["hero"]> = ({
   const router = useRouter();
 
   function handleclick() {
-    let url = "ProductDetails/" + fromOptions;
+    let url = "/products/" + fromOptions;
     router.push(url);
   }
 

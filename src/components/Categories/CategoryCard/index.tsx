@@ -28,14 +28,9 @@ const CategoryCard = ({ category }: CategoryCardProps) => {
     //   </p>
     // </Link>
     <div className=" flex-grow">
-      <Link href="/Products?category=flat">
+      <Link href={`/search/${category.slug}`}>
         <div className="relative xl:w-[620px] lg:w-[470px] sm:w-[500px] w-full h-[300px] sm:h-[350px] mx-auto">
-          <Image
-            className="rounded-lg"
-            src={url}
-            alt={category.id.toString()}
-            fill
-          />
+          <Image className="rounded-lg" src={url} alt={category.title} fill />
           {/* <p className="absolute bottom-3  font-bold left-3  z-10  text-[18px]">{landing.sec2.pro1}</p> */}
         </div>
       </Link>
