@@ -66,7 +66,7 @@ export default buildConfig({
       beforeLogin: ["@/components/BeforeLogin#BeforeLogin"],
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below and the import `BeforeDashboard` statement on line 15.
-      beforeDashboard: ["@/components/BeforeDashboard#BeforeDashboard"],
+      // beforeDashboard: ["@/components/BeforeDashboard#BeforeDashboard"],
     },
     user: Users.slug,
   },
@@ -106,21 +106,22 @@ export default buildConfig({
       ];
     },
   }),
-  // email: nodemailerAdapter({
-  //   defaultFromName: process.env.SMTP_FROM_NAME || 'India Steel Hub',
-  //   defaultFromAddress: process.env.SMTP_FROM_ADDRESS || 'info@indiasteelhub.com',
-  //   transportOptions: {
-  //     host: process.env.SMTP_HOST || 'smtppro.zoho.in',
-  //     port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 465,
-  //     secure: true,
-  //     auth: {
-  //       user: process.env.SMTP_USER,
-  //       pass: process.env.SMTP_PASS,
-  //     },
-  //     debug: false,
-  //     logger: false
-  //   }
-  // }),
+  email: nodemailerAdapter({
+    defaultFromName: process.env.SMTP_FROM_NAME || "India Steel Hub",
+    defaultFromAddress:
+      process.env.SMTP_FROM_ADDRESS || "info@indiasteelhub.com",
+    transportOptions: {
+      host: process.env.SMTP_HOST || "smtppro.zoho.in",
+      port: process.env.SMTP_PORT ? parseInt(process.env.SMTP_PORT) : 465,
+      secure: true,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      debug: false,
+      logger: false,
+    },
+  }),
   endpoints: [],
   globals: [Footer, Header],
   plugins: [
