@@ -33,6 +33,7 @@ import { Users } from "@/collections/Users";
 import { Footer } from "@/globals/Footer";
 import { Header } from "@/globals/Header";
 import { plugins } from "./plugins";
+import { Posts } from "./collections/Posts";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -69,7 +70,7 @@ export default buildConfig({
     },
     user: Users.slug,
   },
-  collections: [Users, Products, Pages, Categories, Media, Orders],
+  collections: [Users, Products, Pages, Categories, Media, Orders, Posts],
 
   // database-adapter-config-start
   db: databaseAdapter,
