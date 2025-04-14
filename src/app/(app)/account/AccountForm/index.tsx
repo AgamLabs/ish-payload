@@ -18,10 +18,12 @@ import { useForm } from "react-hook-form";
 
 type FormData = {
   email: string;
-  name: User["name"];
+  name: string;
   phone: string;
   password: string;
   passwordConfirm: string;
+  address: string;
+  gst: string;
 };
 
 // Phone number regex
@@ -75,6 +77,8 @@ export const AccountForm: React.FC = () => {
             password: "",
             passwordConfirm: "",
             phone: json.doc.phone || "",
+            address: json.doc.address || "",
+            gst: json.doc.gst || "",
           });
         } else {
           setError("There was a problem updating your account.");
@@ -85,7 +89,7 @@ export const AccountForm: React.FC = () => {
   );
 
   useEffect(() => {
-    // console.log('Current user:', user); // Add this line
+    console.log("Current user:", user); // Add this line
     if (user === null) {
       router.push(
         `/login?error=${encodeURIComponent(
@@ -97,11 +101,13 @@ export const AccountForm: React.FC = () => {
     // Once user is loaded, reset form to have default values
     if (user) {
       reset({
-        name: user.name || '', // Fallback to empty string if undefined,
-        email: user.email || '',
+        name: user.name || "", // Fallback to empty string if undefined,
+        email: user.email || "",
         password: "",
         passwordConfirm: "",
         phone: user.phone || "",
+        address: user.address || "",
+        gst: user.gst || "",
       });
     }
   }, [user, router, reset, changePassword]);
@@ -188,6 +194,40 @@ export const AccountForm: React.FC = () => {
               <p className="mt-1 text-sm text-red-500">
                 {errors.phone.message}
               </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <Label htmlFor="address">Address</Label>
+            <Input
+              id="address"
+              {...register("address", {
+                required: "Address is required",
+              })}
+              type="text"
+            />
+            {errors.address && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.address.message}
+              </p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <Label htmlFor="gst">GST Number</Label>
+            <Input
+              id="gst"
+              {...register("gst", {
+                required: "GST number is required",
+                pattern: {
+                  value:
+                    /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+                  message: "Invalid GST number",
+                },
+              })}
+              type="text"
+            />
+            {errors.gst && (
+              <p className="mt-1 text-sm text-red-500">{errors.gst.message}</p>
             )}
           </div>
         </Fragment>

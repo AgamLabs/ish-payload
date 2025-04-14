@@ -11,10 +11,13 @@ import React, { useCallback, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 type FormData = {
+  name: string;
   email: string;
   password: string;
   passwordConfirm: string;
   phone: string;
+  address: string;
+  gst: string;
 };
 
 // Enhanced phone number regex with better international support
@@ -97,9 +100,7 @@ export const CreateAccountForm: React.FC = () => {
   return (
     <form className="max-w-lg py-4" onSubmit={handleSubmit(onSubmit)}>
       <div className="prose dark:prose-invert mb-6">
-        <p>
-          {`Create your account to get started. All fields are required.`}
-        </p>
+        <p>{`Create your account to get started. All fields are required.`}</p>
       </div>
       <Message className="classes.message" error={error} />
 
@@ -119,6 +120,25 @@ export const CreateAccountForm: React.FC = () => {
         />
         {errors.email && (
           <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+        )}
+      </div>
+
+      <div className="mb-4">
+        <Label htmlFor="name">Name</Label>
+        <Input
+          id="name"
+          {...register("name", {
+            required: "Name is required",
+            minLength: {
+              value: 2,
+              message: "Name must be at least 2 characters",
+            },
+          })}
+          required
+          type="text"
+        />
+        {errors.name && (
+          <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
         )}
       </div>
 
@@ -143,10 +163,45 @@ export const CreateAccountForm: React.FC = () => {
             },
           })}
           type="tel"
-          placeholder="+1 234 567 8900"
+          placeholder="+91 9876543210"
         />
         {errors.phone && (
           <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>
+        )}
+      </div>
+
+      <div className="mb-4">
+        <Label htmlFor="address">Address</Label>
+        <Input
+          id="address"
+          {...register("address", {
+            required: "Address is required",
+          })}
+          type="text"
+          placeholder="Enter your address"
+        />
+        {errors.address && (
+          <p className="mt-1 text-sm text-red-500">{errors.address.message}</p>
+        )}
+      </div>
+
+      <div className="mb-4">
+        <Label htmlFor="gst">GST Number</Label>
+        <Input
+          id="gst"
+          {...register("gst", {
+            required: "GST number is required",
+            pattern: {
+              value:
+                /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/,
+              message: "Invalid GST number",
+            },
+          })}
+          type="text"
+          placeholder="Enter your GST number"
+        />
+        {errors.gst && (
+          <p className="mt-1 text-sm text-red-500">{errors.gst.message}</p>
         )}
       </div>
 

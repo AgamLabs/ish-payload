@@ -1,36 +1,36 @@
-import type { User } from '@/payload-types'
-import type { CollectionConfig } from 'payload'
+import type { User } from "@/payload-types";
+import type { CollectionConfig } from "payload";
 
-import { admins } from '@/access/admins'
-import { anyone } from '@/access/anyone'
-import { adminsAndUser } from '@/access/adminsAndUser'
-import { checkRole } from '@/access/checkRole'
+import { admins } from "@/access/admins";
+import { anyone } from "@/access/anyone";
+import { adminsAndUser } from "@/access/adminsAndUser";
+import { checkRole } from "@/access/checkRole";
 
-import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
+import { ensureFirstUserIsAdmin } from "./hooks/ensureFirstUserIsAdmin";
 
 export const Users: CollectionConfig = {
-  slug: 'users',
+  slug: "users",
   access: {
-    admin: ({ req: { user } }) => checkRole(['admin'], user),
+    admin: ({ req: { user } }) => checkRole(["admin"], user),
     create: anyone,
     delete: admins,
     read: adminsAndUser,
     update: adminsAndUser,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'roles', 'phone'],
-    useAsTitle: 'name',
+    defaultColumns: ["name", "email", "roles", "phone", "address", "gst"],
+    useAsTitle: "name",
   },
   auth: {
     forgotPassword: {
       generateEmailHTML: (args) => {
-        const req = args?.req
-        const token = args?.token
-        const user = req?.user
+        const req = args?.req;
+        const token = args?.token;
+        const user = req?.user;
 
         // Use the token provided to allow your user to reset their password
-        const resetPasswordURL = `${process.env.NEXT_PUBLIC_SERVER_URL}/reset-password?token=${token}`
-        const email = (user as User).email
+        const resetPasswordURL = `${process.env.NEXT_PUBLIC_SERVER_URL}/reset-password?token=${token}`;
+        const email = (user as User).email;
         return `
           <!doctype html>
           <html>
@@ -43,86 +43,86 @@ export const Users: CollectionConfig = {
               </p>
             </body>
           </html>
-        `
+        `;
       },
     },
   },
   fields: [
     {
-      name: 'name',
-      type: 'text',
+      name: "name",
+      type: "text",
     },
     {
-      name: 'roles',
-      type: 'select',
+      name: "roles",
+      type: "select",
       access: {
         /* create: admins, */
         read: admins,
         update: admins,
       },
-      defaultValue: ['customer'],
+      defaultValue: ["customer"],
       hasMany: true,
       hooks: {
         beforeChange: [ensureFirstUserIsAdmin],
       },
       options: [
         {
-          label: 'admin',
-          value: 'admin',
+          label: "admin",
+          value: "admin",
         },
         {
-          label: 'customer',
-          value: 'customer',
+          label: "customer",
+          value: "customer",
         },
       ],
     },
     {
-      name: 'orders',
-      type: 'join',
-      collection: 'orders',
-      on: 'orderedBy',
+      name: "orders",
+      type: "join",
+      collection: "orders",
+      on: "orderedBy",
       admin: {
         allowCreate: false,
-        defaultColumns: ['id', 'createdAt', 'total', 'currency', 'items'],
+        defaultColumns: ["id", "createdAt", "total", "currency", "items"],
       },
     },
     {
-      name: 'cart',
-      type: 'group',
+      name: "cart",
+      type: "group",
       fields: [
         {
-          name: 'items',
-          type: 'array',
+          name: "items",
+          type: "array",
           fields: [
             {
-              type: 'row',
+              type: "row",
               fields: [
                 {
-                  name: 'product',
-                  type: 'relationship',
-                  relationTo: 'products',
+                  name: "product",
+                  type: "relationship",
+                  relationTo: "products",
                 },
                 {
-                  name: 'variantID',
-                  type: 'text',
+                  name: "variantID",
+                  type: "text",
                 },
                 {
-                  name: 'variant',
-                  type: 'text',
+                  name: "variant",
+                  type: "text",
                 },
               ],
             },
             {
-              type: 'row',
+              type: "row",
               fields: [
                 {
-                  name: 'unitPrice',
-                  type: 'number',
+                  name: "unitPrice",
+                  type: "number",
                   required: true,
                 },
                 {
-                  name: 'quantity',
-                  type: 'number',
+                  name: "quantity",
+                  type: "number",
                   admin: {
                     step: 1,
                   },
@@ -132,22 +132,34 @@ export const Users: CollectionConfig = {
               ],
             },
             {
-              name: 'url',
-              type: 'text',
+              name: "url",
+              type: "text",
             },
           ],
-          interfaceName: 'CartItems',
-          label: 'Items',
+          interfaceName: "CartItems",
+          label: "Items",
         },
       ],
-      label: 'Cart',
+      label: "Cart",
     },
     {
-      name: 'phone',
-      type: 'text',
-      label: 'Phone Number',
-      required: false, // Set to false if not required
+      name: "phone",
+      type: "text",
+      label: "Phone Number",
+      required: false,
+    },
+    {
+      name: "address",
+      type: "textarea",
+      label: "Address",
+      required: false,
+    },
+    {
+      name: "gst",
+      type: "text",
+      label: "GST Number",
+      required: false,
     },
   ],
   timestamps: true,
-}
+};
