@@ -65,9 +65,9 @@ export default async function Page({ params }: Args) {
   const { hero, layout } = page;
 
   return (
-    <article className="pt-16 pb-24 bg-backgroundgray">
+    <article>
       {slug === "home" ? (
-        <section>
+        <>
           <RenderHero {...hero} />
           <Categories categories={categories} />
           <Section3 />
@@ -76,7 +76,7 @@ export default async function Page({ params }: Args) {
           <Section6 />
           <Section7 />
           <Section8 />
-        </section>
+        </>
       ) : (
         <>
           <RenderHero {...hero} />

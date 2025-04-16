@@ -51,10 +51,11 @@ export const CustomHero: React.FC<Page["hero"]> = ({
     <section>
       <div
         id="sectionone"
-        className="py-48  text-center bg-cover bg-center bg-black bg-opacity-30  bg-blend-overlay text-white"
+        className="relative w-full min-h-screen text-center bg-cover bg-center bg-no-repeat text-white"
         style={{ backgroundImage: `url(${imgUrl})` }}
       >
-        <div className="w-full lg:w-[800px] mx-auto  font-oxygen md:px-10 px-2">
+        <div className="absolute inset-0 bg-black/30 bg-blend-overlay"></div>
+        <div className="relative z-10 w-full lg:w-[800px] mx-auto font-oxygen md:px-10 px-2 pt-96">
           <div className="font-bold text-[30px] lg:text-[45px] pb-4">
             <h1>Stay Ahead of the Curve</h1>
             <h1>Dive into Real-Time Steel Prices and Market Trends Now!</h1>
