@@ -49,23 +49,21 @@ export const CustomHero: React.FC<Page["hero"]> = ({
 
   return (
     <section>
-      <div
-        id="sectionone"
-        className="relative w-full min-h-screen text-center bg-cover bg-center bg-no-repeat text-white"
-        style={{ backgroundImage: `url(${imgUrl})` }}
-      >
-        <div className="absolute inset-0 bg-black/30 bg-blend-overlay"></div>
-        <div className="relative z-10 w-full lg:w-[800px] mx-auto font-oxygen md:px-10 px-2 pt-96">
-          <div className="font-bold text-[30px] lg:text-[45px] pb-4">
-            <h1>Stay Ahead of the Curve</h1>
-            <h1>Dive into Real-Time Steel Prices and Market Trends Now!</h1>
-          </div>
-          {/* <p className=" text-rose-100 mt-2">{landing.sec1.subtitle}</p> */}
-          <div className="flex w-full h-14 rounded-full border border-trueGraysub mt-8 bg-black/50 backdrop-blur-sm">
-            <Box className="flex flex-col w-full "></Box>
-            <button onClick={handleclick}>
-              <Search className="my-auto h-11 w-11 p-1 mr-2 bg-pbtext text-white rounded-full" />
-            </button>
+      <div id="sectionone" className="relative w-full">
+        <img src={imgUrl} className="w-full h-auto object-cover" />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/30 bg-blend-overlay px-4">
+          <div className="w-full max-w-3xl text-center text-white font-oxygen">
+            <div className="font-bold text-2xl sm:text-3xl lg:text-5xl leading-tight pb-4">
+              <h1>Stay Ahead of the Curve</h1>
+              <h1>Dive into Real-Time Steel Prices and Market Trends Now!</h1>
+            </div>
+            {/* <p className=" text-rose-100 mt-2">{landing.sec1.subtitle}</p> */}
+            <div className="flex items-center w-full h-12 sm:h-14 rounded-full border border-white/30 mt-6 sm:mt-8 bg-black/50 backdrop-blur-md">
+              <Box className="flex flex-col w-full px-4"></Box>
+              <button onClick={handleclick}>
+                <Search className="h-10 w-10 sm:h-11 sm:w-11 p-1 bg-pbtext text-white rounded-full" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
