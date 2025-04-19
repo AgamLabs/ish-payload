@@ -1,5 +1,5 @@
 # Use official Node.js LTS image
-FROM node:18-slim
+FROM node:23-slim
 
 # Install pnpm
 RUN npm install -g pnpm
