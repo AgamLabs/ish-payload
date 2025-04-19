@@ -19,12 +19,6 @@ import Section7 from "@/components/ISH/Section7";
 import Section8 from "@/components/ISH/Section8";
 
 export async function generateStaticParams() {
-  // ✅ Prevent Payload from initializing during build (e.g., Railway)
-  if (!process.env.PAYLOAD_SECRET) {
-    console.warn('[generateStaticParams] PAYLOAD_SECRET not set — skipping Payload init.');
-    return [];
-  }
-
   const payload = await getPayload({ config: configPromise });
   const pages = await payload.find({
     collection: "pages",

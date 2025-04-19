@@ -27,7 +27,4 @@ const nextConfig = {
   },
 };
 
-const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
-
-// ✅ Only wrap withPayload if not in build phase (to skip Payload init on Railway)
-export default isBuildPhase ? nextConfig : withPayload(nextConfig);
+export default withPayload(nextConfig);
