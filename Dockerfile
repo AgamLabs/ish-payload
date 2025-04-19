@@ -1,15 +1,17 @@
 # Use official Node.js LTS image
 FROM node:18-slim
 
+# Install pnpm
+RUN npm install -g pnpm
+
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-RUN pnpm install
-
 # Copy source code
 COPY . .
+
+# Install dependencies
+RUN pnpm install
 
 # Build Payload admin panel
 RUN pnpm build
