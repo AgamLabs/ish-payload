@@ -1,18 +1,21 @@
-FROM node:23-alpine AS builder
+# Use official Node.js LTS image
+FROM node:18-slim
 
-RUN mkdir -p /app
+# Set working directory
 WORKDIR /app
 
-COPY package.json  .
-COPY pnpm.lock.yaml .
-
-RUN apk add git
-
+# Install dependencies
+COPY package*.json ./
 RUN pnpm install
 
+# Copy source code
 COPY . .
 
+# Build Payload admin panel
 RUN pnpm build
 
+# Expose the port (default Payload port)
 EXPOSE 3000
-CMD [ "pnpm", "run", "serve" ]
+
+# Start the application
+CMD ["pnpm", "start"]
