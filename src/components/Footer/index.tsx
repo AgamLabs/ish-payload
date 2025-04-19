@@ -43,7 +43,7 @@ export async function Footer() {
             <FooterMenu menu={menu} />
           </Suspense>
           <div className="md:ml-auto">
-            <a
+            {/* <a
               aria-label="Deploy on Vercel"
               className="flex mb-4 h-8 w-max flex-none items-center justify-center rounded-md border border-neutral-200 bg-white text-xs text-black dark:border-neutral-700 dark:bg-black dark:text-white"
               href="https://vercel.com/templates/next.js/nextjs-commerce"
@@ -51,7 +51,7 @@ export async function Footer() {
               <span className="px-3">▲</span>
               <hr className="h-full border-r border-neutral-200 dark:border-neutral-700" />
               <span className="px-3">Deploy</span>
-            </a>
+            </a> */}
             <ThemeSelector />
           </div>
         </div>
@@ -63,11 +63,11 @@ export async function Footer() {
             {copyrightName.length && !copyrightName.endsWith('.') ? '.' : ''} All rights reserved.
           </p>
           <hr className="mx-4 hidden h-4 w-[1px] border-l border-neutral-400 md:inline-block" />
-          <p>Designed in Michigan</p>
-          <p className="md:ml-auto">
-            <a className="text-black dark:text-white" href="https://payloadcms.com">
-              Crafted by ▲ Prayload
-            </a>
+          <p>Designed in India</p>
+          <p className="md:ml-auto text-black dark:text-white">
+            {/* <a className="text-black dark:text-white" href="https://payloadcms.com"> */}
+              Crafted by ▲ AgamLabs
+            {/* </a> */}
           </p>
         </div>
       </div>

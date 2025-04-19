@@ -25,15 +25,15 @@ export async function Header() {
         </Suspense>
       </div>
       <div className="flex w-full items-center">
-        <div className="flex w-full md:w-1/3">
+        <div className="flex w-full md:w-1/2">
           <Link className="mr-2 flex w-full items-center justify-center md:w-auto lg:mr-6" href="/">
             <LogoSquare />
-            <div className="ml-2 flex-none text-sm font-medium uppercase md:hidden lg:block">
+            {/* <div className="ml-2 flex-none text-sm font-medium uppercase md:hidden lg:block">
               {SITE_NAME}
-            </div>
+            </div> */}
           </Link>
           {menu.length ? (
-            <ul className="hidden gap-6 text-sm md:flex md:items-center">
+            <ul className="hidden gap-6 text-sm md:flex md:items-center items-center justify-center">
               {menu.map((item) => (
                 <li key={item.id}>
                   <CMSLink {...{
@@ -48,12 +48,12 @@ export async function Header() {
             </ul>
           ) : null}
         </div>
-        <div className="hidden justify-center md:flex md:w-1/3">
+        {/* <div className="hidden justify-center md:flex md:w-1/3">
           <Suspense fallback={<SearchSkeleton />}>
             <Search />
           </Suspense>
-        </div>
-        <div className="flex justify-end md:w-1/3 gap-4">
+        </div> */}
+        <div className="flex justify-end md:w-1/2 gap-4">
           <Suspense fallback={<OpenCart />}>
             <AccountDrawer />
           </Suspense>

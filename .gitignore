@@ -77,4 +77,24 @@ tmp/
 temp/
 src/test-smtp-verbose.js
 src/test-smtp.js
+
+# Payload
+/uploads/
+/payload-types.ts
+/payload-types.js
+
+# Next.js
+.next/
+out/
+
+# Node
+node_modules/
+
+# Environment files
+.env*
+!.env.example
+
+# Local database files
+*.db
+*.sqlite
 tsconfig.tsbuildinfo
