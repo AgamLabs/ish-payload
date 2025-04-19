@@ -4,15 +4,15 @@ RUN mkdir -p /app
 WORKDIR /app
 
 COPY package.json  .
-COPY yarn.lock .
+COPY pnpm.lock.yaml .
 
 RUN apk add git
 
-RUN yarn install
+RUN pnpm install
 
 COPY . .
 
-RUN yarn build
+RUN pnpm build
 
 EXPOSE 3000
-CMD [ "yarn", "run", "serve" ]
+CMD [ "pnpm", "run", "serve" ]
