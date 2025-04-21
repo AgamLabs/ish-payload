@@ -5,7 +5,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "prepare": "husky",
     "db:create": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts NODE_ENV=development payload create:db",
     "db:migrate": "cross-env PAYLOAD_CONFIG_PATH=src/payload.config.ts payload migrate",
     "build": "cross-env NODE_ENV=production NODE_OPTIONS=--no-deprecation SKIP_LINT=true next build",
@@ -88,7 +87,6 @@
     "eslint": "^9.16.0",
     "eslint-config-next": "15.1.0",
     "eslint-plugin-prettier": "^5.2.6",
-    "husky": "^9.1.7",
     "lint-staged": "^15.4.3",
     "pg": "^8.13.3",
     "postcss": "^8.4.38",
