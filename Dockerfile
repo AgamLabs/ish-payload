@@ -1,23 +1,24 @@
-# Use official Node.js LTS image
-FROM node:23-slim
+FROM node:23.11-slim as base
 
-# Install pnpm
-RUN npm install -g pnpm
+FROM base as builder
 
-# Set working directory
-WORKDIR /app
+WORKDIR /home/node/app
+COPY package*.json ./
 
-# Copy source code
 COPY . .
+RUN yarn install
+RUN yarn build
 
-# Install dependencies
-RUN pnpm install
+FROM base as runtime
 
-# Build Payload admin panel
-RUN pnpm build
+ENV NODE_ENV=production
 
-# Expose the port (default Payload port)
+WORKDIR /home/node/app
+COPY package*.json  ./
+COPY yarn.lock ./
+
+RUN yarn install --production
+
 EXPOSE 3000
 
-# Start the application
-CMD ["pnpm", "start"]
+CMD ["node", "dist/server.js"]
