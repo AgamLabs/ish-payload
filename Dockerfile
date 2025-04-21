@@ -1,6 +1,10 @@
 # Base image
 FROM node:23.11-slim AS base
 
+# Allow ARGs to be passed at build time
+ARG PAYLOAD_SECRET
+ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
+
 # Builder stage
 FROM base AS builder
 
@@ -17,6 +21,8 @@ RUN yarn build
 # Runtime stage
 FROM base AS runtime
 
+ARG PAYLOAD_SECRET
+ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
 ENV NODE_ENV=production
 
 WORKDIR /home/node/app
