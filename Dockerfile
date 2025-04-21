@@ -1,23 +1,36 @@
-FROM node:23.11-slim as base
+# Base image
+FROM node:23.11-slim AS base
 
-FROM base as builder
+# Builder stage
+FROM base AS builder
 
 WORKDIR /home/node/app
-COPY package*.json ./
 
-COPY . .
+# Copy package files and install dependencies
+COPY package*.json ./
 RUN yarn install
+
+# Copy source code and build
+COPY . .
 RUN yarn build
 
-FROM base as runtime
+# Runtime stage
+FROM base AS runtime
 
 ENV NODE_ENV=production
 
 WORKDIR /home/node/app
-COPY package*.json  ./
-COPY yarn.lock ./
 
+# Copy only what is needed for production
+COPY package*.json ./
 RUN yarn install --production
+
+# Copy built app from builder stage
+COPY --from=builder /home/node/app/dist ./dist
+
+# If your app needs public assets or config, copy them too
+COPY --from=builder /home/node/app/public ./public
+COPY --from=builder /home/node/app/config ./config
 
 EXPOSE 3000
 
