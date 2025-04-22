@@ -76,8 +76,8 @@ export default async function Order({ params, searchParams }: PageProps) {
         </p>
         <p className="">
           {'Total: '}
-          {new Intl.NumberFormat('en-US', {
-            currency: 'usd',
+          {new Intl.NumberFormat('en-IN', {
+            currency: 'INR',
             style: 'currency',
           }).format(order.total / 100)}
         </p>

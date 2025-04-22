@@ -112,7 +112,7 @@ export const CartProvider = (props) => {
     currency: string
   }>({
     amount: 0,
-    currency: 'usd',
+    currency: 'INR',
   })
 
   const [quantity, setQuantity] = useState<number>(0)
@@ -398,7 +398,7 @@ export const CartProvider = (props) => {
 
     setTotal({
       amount: newTotal,
-      currency: 'USD',
+      currency: 'INR',
     })
 
     setQuantity(newQuantity)
