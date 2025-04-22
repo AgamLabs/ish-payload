@@ -8,7 +8,7 @@ import React, { Suspense } from 'react'
 import { VariantSelector } from './VariantSelector'
 
 export function ProductDescription({ product }: { product: Product }) {
-  const currency = 'usd'
+  const currency = 'INR'
   let amount = 0,
     lowestAmount = 0,
     highestAmount = 0

@@ -144,7 +144,7 @@ export function CartModal() {
                             <Price
                               amount={price}
                               className="flex justify-end space-y-2 text-right text-sm"
-                              currencyCode={'usd'}
+                              currencyCode={'INR'}
                             />
                           )}
                           <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">

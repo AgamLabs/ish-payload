@@ -31,7 +31,7 @@ export const CheckoutPage: React.FC = () => {
       console.log('Cart items:', cart?.items)
       const orderData = {
         total: cartTotal.amount,
-        currency: 'usd', // Default currency
+        currency: 'INR', // Default currency
         items: cart?.items?.reduce((acc, item) => {
           if (!item?.product) return acc;
           
@@ -160,7 +160,7 @@ export const CheckoutPage: React.FC = () => {
                         <h3 className="font-medium">{item.product.title}</h3>
                         <p className="text-sm text-gray-500 dark:text-gray-400">Quantity: {item.quantity}</p>
                       </div>
-                      <Price amount={(item.product.price || 0) * (item.quantity || 1)} currencyCode="usd" />
+                      <Price amount={(item.product.price || 0) * (item.quantity || 1)} currencyCode="INR" />
                     </div>
                   )
                 }
@@ -169,7 +169,7 @@ export const CheckoutPage: React.FC = () => {
               <div className="pt-4">
                 <div className="flex justify-between items-center font-bold text-lg">
                   <span>Total:</span>
-                  <Price amount={cartTotal.amount} currencyCode="usd" />
+                  <Price amount={cartTotal.amount} currencyCode="INR" />
                 </div>
               </div>
             </div>

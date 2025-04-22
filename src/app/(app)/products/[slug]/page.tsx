@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: Args) {
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
       price: price,
-      priceCurrency: "usd",
+      priceCurrency: "INR",
     },
   };
 
@@ -179,7 +179,7 @@ function RelatedProducts({ products }: { products: Product[] }) {
               <GridTileImage
                 label={{
                   amount: product.price!,
-                  currencyCode: "usd",
+                  currencyCode: "INR",
                   title: product.title,
                 }}
                 media={product.meta?.image as Media}

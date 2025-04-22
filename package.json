@@ -61,7 +61,7 @@
     "lucide-react": "^0.378.0",
     "next": "15.2.4",
     "nodemailer": "6.9.10",
-    "payload": "^3.23.0",
+    "payload": "3.23.0",
     "payload-admin-bar": "^1.0.6",
     "prism-react-renderer": "^2.3.1",
     "qs-esm": "^7",

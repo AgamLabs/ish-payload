@@ -26,7 +26,7 @@ export function ProductGridItems({ products }: { products: Partial<Product>[] })
               <GridTileImage
                 label={{
                   amount: product.price!,
-                  currencyCode: 'USD',
+                  currencyCode: 'INR',
                   title: product.title!,
                 }}
                 media={image}

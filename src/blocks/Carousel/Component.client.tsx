@@ -41,7 +41,7 @@ export const CarouselClient: React.FC<{ products: Product[] }> = async ({ produc
               <GridTileImage
                 label={{
                   amount: product.price!,
-                  currencyCode: 'usd', // Default to USD
+                  currencyCode: 'INR', // Default to INR
                   title: product.title,
                 }}
                 media={product.meta?.image as Media}
