@@ -69,6 +69,7 @@ export default buildConfig({
       // beforeDashboard: ["@/components/BeforeDashboard#BeforeDashboard"],
     },
     user: Users.slug,
+    theme: "light",
   },
   collections: [Users, Products, Pages, Categories, Media, Orders, Posts],
 
