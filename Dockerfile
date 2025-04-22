@@ -71,9 +71,6 @@ WORKDIR /home/node/app
 COPY package*.json pnpm*.yaml ./
 RUN pnpm install --prod && pnpm store prune
 
-# Option 1: Install cross-env if needed
-RUN pnpm add cross-env --prod
-
 # Copy built files from builder
 COPY --from=builder /home/node/app/.next ./.next
 COPY --from=builder /home/node/app/public ./public
@@ -84,4 +81,4 @@ RUN chown -R node:node /home/node/app
 USER node
 
 EXPOSE 3000
-CMD ["pnpm", "start"]
+CMD ["node", "--no-deprecation", "node_modules/.bin/next", "start"]
