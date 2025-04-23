@@ -13,7 +13,6 @@ type CategoryCardProps = {
 const CategoryCard = ({ category }: CategoryCardProps) => {
   const media = category.image as Media;
   const url = media?.url || "/media/image-hero1-1.webp";
-  // console.log("Media: " + url);
   const { setCategoryFilters } = useFilter();
 
   return (

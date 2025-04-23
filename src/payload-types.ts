@@ -243,6 +243,7 @@ export interface Product {
     };
     [k: string]: unknown;
   } | null;
+  descriptionPlain?: string | null;
   gallery: (number | Media)[];
   layout?: (CallToActionBlock | ContentBlock | MediaBlock)[] | null;
   enableVariants?: boolean | null;
@@ -1174,6 +1175,7 @@ export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   publishedOn?: T;
   description?: T;
+  descriptionPlain?: T;
   gallery?: T;
   layout?:
     | T

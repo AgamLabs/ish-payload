@@ -18,8 +18,6 @@ async function getFeaturedProducts(): Promise<Product[]> {
     limit: 5,
   });
 
-  // console.log(popularProducts);
-
   return featuredProducts.docs || null;
 }
 
