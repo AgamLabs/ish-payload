@@ -52,7 +52,7 @@ export const CustomHero: React.FC<Page["hero"]> = ({
           alt="Hero image"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 bg-blend-overlay px-4">
-          <div className="w-full max-w-3xl text-center text-white font-oxygen">
+          <div className="w-full max-w-3xl text-center font-oxygen">
             {/* <div className="font-bold text-2xl sm:text-3xl lg:text-5xl leading-tight pb-4">
               <h1>Stay Ahead of the Curve</h1>
               <h1>Dive into Real-Time Steel Prices and Market Trends Now!</h1>
