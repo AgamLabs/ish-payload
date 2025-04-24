@@ -420,6 +420,12 @@ export interface Page {
         }[]
       | null;
     media?: (number | null) | Media;
+    mediaArray?:
+      | {
+          media: number | Media;
+          id?: string | null;
+        }[]
+      | null;
   };
   layout: (
     | CallToActionBlock
@@ -1322,6 +1328,12 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
+        mediaArray?:
+          | T
+          | {
+              media?: T;
+              id?: T;
+            };
       };
   layout?:
     | T
