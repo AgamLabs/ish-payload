@@ -30,11 +30,9 @@ export default async function BlogSection() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
               {landing.sec6.title}
             </h2>
-            <p className="mt-4 text-lg text-gray-600">
-              {landing.sec6.sub}
-            </p>
+            <p className="mt-4 text-lg text-gray-600">{landing.sec6.sub}</p>
           </div>
-          <Link 
+          <Link
             href="/blog"
             className="inline-flex items-center px-6 py-3 bg-customBlue hover:bg-blue-700 text-white font-medium rounded-full transition-colors duration-200"
           >
@@ -51,7 +49,10 @@ export default async function BlogSection() {
                 key={post.id}
                 className="group rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 bg-white w-full"
               >
-                <Link href={`/blog/${post.slug}`} className="block h-full w-full">
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="block h-full w-full"
+                >
                   {/* Featured Image */}
                   {post.heroImage && typeof post.heroImage === "object" && (
                     <div className="aspect-video w-full overflow-hidden">
@@ -69,10 +70,16 @@ export default async function BlogSection() {
                       <div className="flex flex-wrap gap-2 mb-3 w-full">
                         {post.categories.map((category) => (
                           <span
-                            key={typeof category === 'object' ? category.id : category}
+                            key={
+                              typeof category === "object"
+                                ? category.id
+                                : category
+                            }
                             className="px-3 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full"
                           >
-                            {typeof category === 'object' ? category.title : `Category #${category}`}
+                            {typeof category === "object"
+                              ? category.title
+                              : `Category #${category}`}
                           </span>
                         ))}
                       </div>
