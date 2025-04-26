@@ -62,14 +62,31 @@ export const hero: Field = {
         maxRows: 2,
       },
     }),
+    // Single media for highImpact and mediumImpact
     {
       name: 'media',
       type: 'upload',
       admin: {
-        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact', 'customHero'].includes(type),
+        condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),
       },
       relationTo: 'media',
       required: true,
+    },
+    // Multiple media for customHero
+    {
+      name: 'mediaArray',
+      type: 'array',
+      admin: {
+        condition: (_, { type } = {}) => type === 'customHero',
+      },
+      fields: [
+        {
+          name: 'media',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
+        },
+      ],
     },
   ],
   label: false,

@@ -20,8 +20,6 @@ async function getPopularProducts(): Promise<Product[]> {
     limit: 8,
   });
 
-  // console.log(popularProducts);
-
   return popularProducts.docs || null;
 }
 

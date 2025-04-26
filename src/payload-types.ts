@@ -243,6 +243,7 @@ export interface Product {
     };
     [k: string]: unknown;
   } | null;
+  descriptionPlain?: string | null;
   gallery: (number | Media)[];
   layout?: (CallToActionBlock | ContentBlock | MediaBlock)[] | null;
   enableVariants?: boolean | null;
@@ -419,6 +420,12 @@ export interface Page {
         }[]
       | null;
     media?: (number | null) | Media;
+    mediaArray?:
+      | {
+          media: number | Media;
+          id?: string | null;
+        }[]
+      | null;
   };
   layout: (
     | CallToActionBlock
@@ -1174,6 +1181,7 @@ export interface ProductsSelect<T extends boolean = true> {
   title?: T;
   publishedOn?: T;
   description?: T;
+  descriptionPlain?: T;
   gallery?: T;
   layout?:
     | T
@@ -1320,6 +1328,12 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
+        mediaArray?:
+          | T
+          | {
+              media?: T;
+              id?: T;
+            };
       };
   layout?:
     | T

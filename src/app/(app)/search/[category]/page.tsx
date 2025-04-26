@@ -28,8 +28,6 @@ export default async function SearchCategoryPage(props: {
     })
   ).docs?.[0];
 
-  // console.log(categoryBySlug)
-
   if (!categoryBySlug) {
     // Handle not found
     throw new Error(`Category not found for slug: ${category}`);
@@ -50,8 +48,6 @@ export default async function SearchCategoryPage(props: {
     })
   ).docs?.[0];
 
-  // console.log(categoryDoc)
-
   const safeSearchValue = searchValue ?? "";
 
   const products = await payload.find({
@@ -67,11 +63,11 @@ export default async function SearchCategoryPage(props: {
                 like: safeSearchValue,
               },
             },
-            // {
-            //   description: {
-            //     like: safeSearchValue,
-            //   },
-            // },
+            {
+              descriptionPlain: {
+                like: safeSearchValue,
+              },
+            },
           ],
         },
       ],

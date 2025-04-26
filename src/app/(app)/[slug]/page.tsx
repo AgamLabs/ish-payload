@@ -14,7 +14,7 @@ import Categories from "@/components/Categories";
 import Section3 from "@/components/ISH/Section3";
 import Section4 from "@/components/ISH/Section4";
 import Section5 from "@/components/ISH/Section5";
-import Section6 from "@/components/ISH/Section6";
+import BlogSection from "@/components/ISH/BlogSection";
 import Section7 from "@/components/ISH/Section7";
 import Section8 from "@/components/ISH/Section8";
 
@@ -73,7 +73,7 @@ export default async function Page({ params }: Args) {
           <Section3 />
           <Section4 />
           <Section5 />
-          <Section6 />
+          <BlogSection />
           <Section7 />
           <Section8 />
         </>
@@ -127,8 +127,6 @@ async function getCategories() {
       parent: { equals: null },
     },
   });
-
-  // console.log(categories);
 
   return categories.docs || null;
 }

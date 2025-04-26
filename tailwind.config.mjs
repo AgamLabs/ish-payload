@@ -119,10 +119,7 @@ export default {
         },
       }),
       fontFamily: {
-        exo: ['Exo', 'sans-serif'],
-        oxygen: ['Oxygen', 'sans-serif'],
-        roboto: ['Roboto' , 'sans-serif'],
-        poppins:['Poppins' , 'sans-serif ']
+        montserrat: ['Montserrat', 'sans-serif'],
       },
       keyframes: {
         fadeIn: {

@@ -22,7 +22,10 @@ export const VariantSelect: React.FC<TextFieldClientProps> = (props) => {
   const { getDataByPath } = useForm()
 
   const options: NonNullable<Product['variants']>['options'] = getDataByPath('variants.options')
-  const values = getDataByPath<Option[]>(path)
+  const rawValues = getDataByPath(path)
+  const values = Array.isArray(rawValues) ? rawValues : []
+  
+
 
   const { i18n } = useTranslation()
 
