@@ -5,39 +5,29 @@ import configPromise from "@payload-config";
 import { Media } from "@/components/Media";
 import { formatDate } from "@/lib/formatDate";
 
+// Define a custom type for searchParams
+interface SearchParams {
+  page?: string;
+  category?: string;
+  search?: string;
+}
+
 export const metadata: Metadata = {
   title: "Blog Posts",
   description: "Read our latest articles and news",
 };
 
-// Define types for clarity and safety
-type Category = {
-  id: string;
-  title: string;
-};
-
-type Post = {
-  id: string;
-  slug: string;
-  title: string;
-  heroImage?: any;
-  categories?: Category[];
-  meta?: {
-    description?: string;
-  };
-  publishedAt?: string;
-};
-
 export default async function BlogListPage({
   searchParams,
 }: {
-  searchParams: { page?: string; category?: string; search?: string };
+  searchParams?: Promise<SearchParams> | undefined; // Explicitly type as Promise
 }) {
-  const payload = await getPayload({ config: configPromise });
+  const params = await searchParams; // Resolve the promise
+  const page = parseInt(params?.page || "1", 10);
+  const category = params?.category;
+  const search = params?.search;
 
-  const page = parseInt(searchParams.page || "1");
-  const category = searchParams.category;
-  const search = searchParams.search;
+  const payload = await getPayload({ config: configPromise });
 
   const { docs: posts, totalPages } = await payload.find({
     collection: "posts",
@@ -58,7 +48,7 @@ export default async function BlogListPage({
   });
 
   return (
-    <main className="container mx-auto px-4 py-12">
+    <section className="container mx-auto px-4 py-12">
       <h1 className="text-4xl font-bold mb-6">Blog Posts</h1>
 
       <form className="mb-8">
@@ -178,6 +168,6 @@ export default async function BlogListPage({
           </div>
         </div>
       )}
-    </main>
+    </section>
   );
 }
