@@ -25,7 +25,7 @@ const Section3 = async () => {
   const products = await getFeaturedProducts();
 
   return (
-    <div className="py-10 px-5 font-oxygen">
+    <div className="py-10 px-5">
       <h1 className="text-trueGray text-4xl font-bold text-center">
         {landing.sec3.title}
       </h1>

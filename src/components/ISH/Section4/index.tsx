@@ -27,7 +27,7 @@ const Section4 = async () => {
   const products = await getPopularProducts();
 
   return (
-    <div className="py-10 px-3 font-oxygen">
+    <div className="py-10 px-3">
       <div className="flex justify-between md:px-10">
         <div className=" md:w-3/5 xl:w-2/5">
           <h1 className="text-trueGray text-4xl font-bold max-md:w-4/6">
@@ -38,7 +38,7 @@ const Section4 = async () => {
         <div className=" md:my-auto max-md:absolute max-md:right-2 max-md:mt-3">
           <Link
             href="/search"
-            className=" px-4 py-3 bg-customBlue rounded-3xl text-grayfortext font-exo font-semibold"
+            className=" px-4 py-3 bg-customBlue rounded-3xl text-grayfortext font-semibold"
           >
             View All <ArrowForwardIosTwoTone fontSize="small" />
           </Link>

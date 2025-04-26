@@ -8,7 +8,6 @@ import { formatDate } from "@/lib/formatDate";
 // Define a custom type for searchParams
 interface SearchParams {
   page?: string;
-  category?: string;
   search?: string;
 }
 
@@ -24,7 +23,6 @@ export default async function BlogListPage({
 }) {
   const params = await searchParams; // Resolve the promise
   const page = parseInt(params?.page || "1", 10);
-  const category = params?.category;
   const search = params?.search;
 
   const payload = await getPayload({ config: configPromise });
@@ -35,67 +33,42 @@ export default async function BlogListPage({
     page,
     where: {
       _status: { equals: "published" },
-      ...(category && { categories: { in: [category] } }),
       ...(search && { title: { contains: search } }),
     },
     sort: "-publishedAt",
     depth: 1,
   });
 
-  const { docs: categories } = await payload.find({
-    collection: "categories",
-    limit: 100,
-  });
-
   return (
     <section className="container mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-6">Blog Posts</h1>
-
-      <form className="mb-8">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            name="search"
-            placeholder="Search posts..."
-            className="flex-1 max-w-md px-4 py-2 border rounded-lg"
-            defaultValue={search || ""}
-          />
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-          >
-            Search
-          </button>
-        </div>
-      </form>
-
-      <div className="flex flex-wrap gap-2 mb-8">
-        <Link
-          href="/blog"
-          className={`px-4 py-2 rounded ${
-            !category
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 hover:bg-gray-300"
-          }`}
-        >
-          All Categories
-        </Link>
-        {categories.map((cat) => (
-          <Link
-            key={cat.id}
-            href={`/blog?category=${cat.id}`}
-            className={`px-4 py-2 rounded ${
-              category === String(cat.id)
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 hover:bg-gray-300"
-            }`}
-          >
-            {cat.title}
-          </Link>
-        ))}
+      {/* Hero Image Section */}
+      <div className="relative h-96 overflow-hidden rounded-lg mb-12">
+        <img
+          src="/media/ISH_blog.avif"
+          alt="Hero Image"
+          className="w-full h-full object-cover"
+        />
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* Search Bar */}
+      <form className="mb-8 flex flex-col sm:flex-row gap-4">
+        <input
+          type="text"
+          name="search"
+          placeholder="Search posts..."
+          className="flex-1 px-4 py-2 border rounded-lg"
+          defaultValue={search || ""}
+        />
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg w-full sm:w-auto"
+        >
+          Search
+        </button>
+      </form>
+
+      {/* Blog Post Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.map((post) => (
           <article
             key={post.id}
@@ -111,29 +84,13 @@ export default async function BlogListPage({
                 </div>
               )}
               <div className="p-6">
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {post.categories?.map((cat) => {
-                    const isCategoryObj =
-                      typeof cat === "object" &&
-                      cat !== null &&
-                      "id" in cat &&
-                      "title" in cat;
-
-                    return (
-                      <span
-                        key={isCategoryObj ? cat.id : cat}
-                        className="px-2 py-1 bg-gray-100 rounded-full text-xs"
-                      >
-                        {isCategoryObj ? cat.title : `Category #${cat}`}
-                      </span>
-                    );
-                  })}
-                </div>
-                <h2 className="text-xl font-bold mb-2">{post.title}</h2>
+                <h2 className="text-xl font-bold mb-2 line-clamp-2">
+                  {post.title}
+                </h2>
                 <p className="text-gray-600 text-sm mb-4">
                   {post.publishedAt && formatDate(post.publishedAt)}
                 </p>
-                <p className="text-gray-700 line-clamp-2">
+                <p className="text-gray-700 line-clamp-3">
                   {post.meta?.description || "No description available."}
                 </p>
               </div>
@@ -142,30 +99,28 @@ export default async function BlogListPage({
         ))}
       </div>
 
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-12">
-          <div className="flex gap-2">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <Link
-                key={i}
-                href={{
-                  pathname: "/blog",
-                  query: {
-                    ...(category && { category }),
-                    ...(search && { search }),
-                    page: i + 1,
-                  },
-                }}
-                className={`px-4 py-2 rounded ${
-                  i + 1 === page
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 hover:bg-gray-300"
-                }`}
-              >
-                {i + 1}
-              </Link>
-            ))}
-          </div>
+        <div className="flex flex-wrap justify-center mt-12 gap-2">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <Link
+              key={i}
+              href={{
+                pathname: "/blog",
+                query: {
+                  ...(search && { search }),
+                  page: i + 1,
+                },
+              }}
+              className={`px-4 py-2 rounded ${
+                i + 1 === page
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+              }`}
+            >
+              {i + 1}
+            </Link>
+          ))}
         </div>
       )}
     </section>

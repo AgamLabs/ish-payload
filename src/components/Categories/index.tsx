@@ -7,11 +7,11 @@ const Categories = ({ categories }: { categories: Category[] }) => {
   return (
     <section>
       <div className="w-full  text-center mx-auto px-5 py-16">
-        <h1 className=" font-oxygen font-bold text-[36px] text-trueGray mb-4">
+        <h1 className="font-bold text-[36px] text-trueGray mb-4">
           View Our Range Of Categories
         </h1>
 
-        <p className=" font-exo text-trueGraysub mb-10">
+        <p className="text-trueGraysub mb-10">
           Explore our selection of steel products, featuring both flat and long
           options. Invest in your project's potential today!
         </p>
