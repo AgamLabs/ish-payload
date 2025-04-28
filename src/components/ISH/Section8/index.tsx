@@ -11,8 +11,8 @@ import Link from "next/link";
 const Section8 = () => {
   return (
     <div>
-      <div className=" relative w-full h-[250px] md:h-[400px]">
-        <Image src="/media/sec7bg.png" alt="background image" fill />
+      <div className=" relative w-full h-[400px] md:h-[500px]">
+        <Image src="/media/ISH_banner.avif" alt="background image" fill />
       </div>
       <div className=" px-5 md:px-10 pt-20 pb-4">
         <div className=" sm:flex gap-10 md:gap-24 sm:px-10 font-roboto">
