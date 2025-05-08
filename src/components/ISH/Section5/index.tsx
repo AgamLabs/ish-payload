@@ -4,7 +4,7 @@ import { ArrowForwardIosTwoTone } from "@mui/icons-material";
 const Section5 = () => {
   return (
     <img
-      src="media/unique_proportions.avif"
+      src="media/section5.avif"
       alt="Hero Image"
       className="w-full h-full object-cover"
     />
