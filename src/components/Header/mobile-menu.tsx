@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import type { Header } from '@/payload-types'
+import type { Header } from "@/payload-types";
 
-import { CMSLink } from '@/components/Link'
-import { Button } from '@/components/ui/button'
+import { CMSLink } from "@/components/Link";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -11,46 +11,46 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { useAuth } from '@/providers/Auth'
-import { MenuIcon } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
-import React, { Suspense, useEffect, useState } from 'react'
+} from "@/components/ui/sheet";
+import { useAuth } from "@/providers/Auth";
+import { MenuIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
+import React, { Suspense, useEffect, useState } from "react";
 
-import { Search, SearchSkeleton } from './search'
+import { Search, SearchSkeleton } from "./search";
 
 interface Props {
-  menu: Header['navItems']
+  menu: Header["navItems"];
 }
 
 export function MobileMenu({ menu }: Props) {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [isOpen, setIsOpen] = useState(false)
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [isOpen, setIsOpen] = useState(false);
 
-  const _closeMobileMenu = () => setIsOpen(false)
+  const _closeMobileMenu = () => setIsOpen(false);
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [isOpen])
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen]);
 
   useEffect(() => {
-    setIsOpen(false)
-  }, [pathname, searchParams])
+    setIsOpen(false);
+  }, [pathname, searchParams]);
 
   return (
     <Sheet onOpenChange={setIsOpen} open={isOpen}>
-      <SheetTrigger className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:bg-black dark:text-white">
-        <MenuIcon className="h-4" />
+      <SheetTrigger className="relative flex h-11 w-11 items-center justify-center rounded-md border-none text-white transition-colors">
+        <MenuIcon className="h-5 w-5" />
       </SheetTrigger>
 
       <SheetContent side="left">
@@ -70,13 +70,21 @@ export function MobileMenu({ menu }: Props) {
             <ul className="flex w-full flex-col">
               {menu.map((item) => (
                 <li className="py-2" key={item.id}>
-                  <CMSLink {...{
-                    ...item.link,
-                    reference: item.link.reference ? {
-                      ...item.link.reference,
-                      value: typeof item.link.reference.value === 'number' ? String(item.link.reference.value) : item.link.reference.value
-                    } : null
-                  }} appearance="link" />
+                  <CMSLink
+                    {...{
+                      ...item.link,
+                      reference: item.link.reference
+                        ? {
+                            ...item.link.reference,
+                            value:
+                              typeof item.link.reference.value === "number"
+                                ? String(item.link.reference.value)
+                                : item.link.reference.value,
+                          }
+                        : null,
+                    }}
+                    appearance="link"
+                  />
                 </li>
               ))}
             </ul>
@@ -117,5 +125,5 @@ export function MobileMenu({ menu }: Props) {
         )}
       </SheetContent>
     </Sheet>
-  )
+  );
 }
