@@ -9,7 +9,7 @@ import {
   TableBody,
   TableRow,
   TableHead,
-  TableCell
+  TableCell,
 } from "../ui/table";
 import { toast } from "sonner";
 import { generateProductUploadTemplate } from "@/utilities/generateProductTemplate";
@@ -28,7 +28,7 @@ interface ProductData {
   price: number;
   description?: string;
   category?: string;
-  variants: Product['variants'];
+  variants: Product["variants"];
 }
 
 interface BulkUploadResponse {
@@ -48,7 +48,9 @@ interface BulkUploadResponse {
 const BulkProductUpload: React.FC = () => {
   const [products, setProducts] = useState<ProductData[]>([]);
   const [isUploading, setIsUploading] = useState<boolean>(false);
-  const [uploadErrors, setUploadErrors] = useState<BulkUploadResponse | null>(null);
+  const [uploadErrors, setUploadErrors] = useState<BulkUploadResponse | null>(
+    null
+  );
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,53 +60,109 @@ const BulkProductUpload: React.FC = () => {
       const data = await file.arrayBuffer();
       const workbook = XLSX.read(data);
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json<any>(worksheet);
+      const rawData = XLSX.utils.sheet_to_json<any>(worksheet, { header: 1 }); // Use array of arrays
+
+      // Find header row, value row, and width row
+      const [mainHeader, valueRow, ...dataRows] = rawData; // Second row has product info and width headers
+      // mainHeader: [Title, Description, Category, Variant_Thickness, ...]
+      // valueRow:   [CR Coils, Flat Products, ... , '', 900, 1000, ...]
+
+      // Find the index for thickness and width columns
+      const thicknessColIdx = mainHeader.findIndex((h) =>
+        String(h).toLowerCase().includes("thickness")
+      );
+      const widthStartIdx = thicknessColIdx + 1;
+      const widthHeaders = valueRow.slice(widthStartIdx); // Use valueRow for width headers
+
+      // Get product info from value row
+      const title = valueRow[0] || "";
+      const description = valueRow[1] || "";
+      const category = valueRow[2] || "";
 
       const productMap = new Map<string, ProductDataTemp>();
+      const key = `${title}||${category}`;
+      productMap.set(key, {
+        title,
+        price: 0,
+        description,
+        category,
+        variantList: [],
+      });
 
-      jsonData.forEach((row) => {
-        const key = `${row.title}||${row.category}`;
-        const variant = {
-          thickness: row.variant_thickness,
-          width: row.variant_width,
-          length: row.variant_length,
-          grade: row.variant_grade,
-          price: Number(row.variant_price) || 0,
-          stock: Number(row.variant_stock) || 0,
-          // images: row.variant_images ? row.variant_images.split(';') : []
-        };
-        if (productMap.has(key)) {
-          productMap.get(key)!.variantList.push(variant);
-        } else {
-          productMap.set(key, {
-            title: row.title,
-            price: Number(row.price),
-            description: row.description || '',
-            category: row.category || '',
-            variantList: [variant],
-          });
+      // Parse each data row (skip empty rows)
+      for (const row of dataRows) {
+        const thickness = (row[thicknessColIdx] ?? "").toString().trim();
+        if (!thickness) continue;
+        for (let i = 0; i < widthHeaders.length; i++) {
+          const width = (widthHeaders[i] ?? "").toString().trim();
+          if (!width) continue;
+          const price = Number(row[widthStartIdx + i]) || 0;
+          if (price > 0) {
+            const variant = {
+              thickness,
+              width,
+              length: "",
+              grade: "",
+              price,
+              stock: 0,
+            };
+            productMap.get(key)!.variantList.push(variant);
+          }
+        }
+      }
+
+      // Calculate base price as minimum variant price for each product
+      productMap.forEach((product) => {
+        if (product.variantList.length > 0) {
+          product.price = Math.min(...product.variantList.map((v) => v.price));
         }
       });
 
-      // 2. After aggregation, map to final ProductData[] with correct Product['variants'] type
-      const validProducts: ProductData[] = Array.from(productMap.values()).map((product) => {
-        const options = [
-          { label: 'Thickness', slug: 'thickness', id: null },
-          { label: 'Width', slug: 'width', id: null },
-          { label: 'Length', slug: 'length', id: null },
-          { label: 'Grade', slug: 'grade', id: null },
-        ];
-        const transformedVariants = transformVariants(product.variantList);
-        const { variantList, ...rest } = product;
-        return {
-          ...rest,
-          variants: {
-            options,
-            variants: transformedVariants,
-          },
-        };
+      console.log(productMap);
 
-      });
+      // Convert to final format
+      const validProducts: ProductData[] = Array.from(productMap.values()).map(
+        (product) => {
+          // Collect unique, non-empty thicknesses and widths for options.values
+          const thicknessSet = new Set<string>();
+          const widthSet = new Set<string>();
+          product.variantList.forEach((variant) => {
+            const t = (variant.thickness || '').toString().trim();
+            const w = (variant.width || '').toString().trim();
+            if (t) thicknessSet.add(t);
+            if (w) widthSet.add(w);
+          });
+
+          const thicknessValues = Array.from(thicknessSet)
+            .filter((val) => val && val.length > 0)
+            .map((val) => ({
+              label: val,
+              slug: val.toLowerCase().replace(/\s+/g, "-"),
+              id: undefined,
+            }));
+          const widthValues = Array.from(widthSet)
+            .filter((val) => val && val.length > 0)
+            .map((val) => ({
+              label: val,
+              slug: val.toLowerCase().replace(/\s+/g, "-"),
+              id: undefined,
+            }));
+
+          const options = [
+            { label: "Thickness", slug: "thickness", id: null, values: thicknessValues || [] },
+            { label: "Width", slug: "width", id: null, values: widthValues || [] },
+          ];
+          const transformedVariants = transformVariants(product.variantList);
+          const { variantList, ...rest } = product;
+          return {
+            ...rest,
+            variants: {
+              options,
+              variants: transformedVariants,
+            },
+          };
+        }
+      );
 
       setProducts(validProducts);
       setUploadErrors(null);
@@ -115,46 +173,36 @@ const BulkProductUpload: React.FC = () => {
     }
   };
 
-
-
   // Returns Product['variants']['variants'] (array of variant objects)
-  const transformVariants = (variantsData: any[]): NonNullable<NonNullable<Product['variants']>['variants']> => {
+  const transformVariants = (
+    variantsData: any[]
+  ): NonNullable<NonNullable<Product["variants"]>["variants"]> => {
     if (!Array.isArray(variantsData)) {
-      throw new Error('Invalid variants data format');
+      throw new Error("Invalid variants data format");
     }
 
     return variantsData.map((variant, index) => ({
-      id: (variant.id ?? index?.toString()) ?? null,
+      id: index.toString(),
       options: [
         {
           label: variant.thickness,
-          slug: variant.thickness?.toLowerCase().replace(/\s+/g, '-'),
-          id: variant.thickness_id ?? undefined,
+          slug: variant.thickness
+            ?.toString()
+            .toLowerCase()
+            .replace(/\s+/g, "-"),
+          id: undefined,
         },
         {
           label: variant.width,
-          slug: variant.width?.toLowerCase().replace(/\s+/g, '-'),
-          id: variant.width_id ?? undefined,
-        },
-        {
-          label: variant.length,
-          slug: variant.length?.toLowerCase().replace(/\s+/g, '-'),
-          id: variant.length_id ?? undefined,
-        },
-        {
-          label: variant.grade,
-          slug: variant.grade?.toLowerCase().replace(/\s+/g, '-'),
-          id: variant.grade_id ?? undefined,
+          slug: variant.width?.toString().toLowerCase().replace(/\s+/g, "-"),
+          id: undefined,
         },
       ],
       price: Number(variant.price) || 0,
       stock: Number(variant.stock) || 0,
-      images: Array.isArray(variant.images) && variant.images.length > 0 ? variant.images : null,
+      images: null,
     }));
   };
-
-
-
 
   const handleBulkUpload = async () => {
     if (products.length === 0) {
@@ -192,7 +240,9 @@ const BulkProductUpload: React.FC = () => {
 
   return (
     <div className="max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">Bulk Product Upload</h2>
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">
+        Bulk Product Upload
+      </h2>
 
       {/* Upload Controls */}
       <div className="bg-white dark:bg-neutral-900 shadow rounded-lg p-6 mb-6 flex flex-col sm:flex-row items-center gap-4">
@@ -225,17 +275,30 @@ const BulkProductUpload: React.FC = () => {
             <Table className="min-w-full divide-y divide-gray-200">
               <TableHeader className="bg-gray-50 dark:bg-neutral-800">
                 <TableRow>
-                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">Title</TableHead>
-                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">Price</TableHead>
-                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">Category</TableHead>
+                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">
+                    Title
+                  </TableHead>
+                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">
+                    Price
+                  </TableHead>
+                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">
+                    Category
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="bg-white dark:bg-neutral-900">
                 {products.map((product, index) => (
-                  <TableRow key={index} className="hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors">
+                  <TableRow
+                    key={index}
+                    className="hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
+                  >
                     <TableCell className="px-4 py-2">{product.title}</TableCell>
-                    <TableCell className="px-4 py-2">${product.price.toFixed(2)}</TableCell>
-                    <TableCell className="px-4 py-2">{product.category}</TableCell>
+                    <TableCell className="px-4 py-2">
+                      ${product.price.toFixed(2)}
+                    </TableCell>
+                    <TableCell className="px-4 py-2">
+                      {product.category}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -247,7 +310,9 @@ const BulkProductUpload: React.FC = () => {
             disabled={isUploading}
             className="mt-4 w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors px-6 py-2 shadow"
           >
-            {isUploading ? "Uploading..." : `Upload ${products.length} Products`}
+            {isUploading
+              ? "Uploading..."
+              : `Upload ${products.length} Products`}
           </Button>
         </>
       )}
@@ -260,7 +325,9 @@ const BulkProductUpload: React.FC = () => {
               <h4 className="text-red-600">Validation Errors:</h4>
               {uploadErrors.validationErrors.map((validationError, index) => (
                 <div key={index} className="mb-2 p-2 bg-red-100 rounded">
-                  <p className="font-semibold">Product: {validationError.product.title}</p>
+                  <p className="font-semibold">
+                    Product: {validationError.product.title}
+                  </p>
                   {validationError.errors.map((error, errorIndex) => (
                     <p key={errorIndex} className="text-red-700">
                       {error.path}: {error.message}
@@ -275,7 +342,9 @@ const BulkProductUpload: React.FC = () => {
               <h4 className="text-red-600">Creation Errors:</h4>
               {uploadErrors.errors.map((error, index) => (
                 <div key={index} className="mb-2 p-2 bg-red-100 rounded">
-                  <p className="font-semibold">Product: {error.product.title}</p>
+                  <p className="font-semibold">
+                    Product: {error.product.title}
+                  </p>
                   <p className="text-red-700">{error.error}</p>
                 </div>
               ))}
