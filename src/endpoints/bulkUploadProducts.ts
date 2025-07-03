@@ -46,7 +46,7 @@ const bulkUploadProducts: Endpoint = {
           // Expect product.variants to be the correct object structure
           const productData: Omit<Product, "id" | "updatedAt" | "createdAt"> & Partial<Pick<Product, "id" | "updatedAt" | "createdAt">> = {
             title: product.title ?? '',
-            stock: Number(product.stock) || 0,
+            stock: Number(product.stock) || 1000,
             price: Number(product.price) || 0,
             enableVariants: true,
             _status: 'draft',

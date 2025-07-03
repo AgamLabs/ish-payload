@@ -59,7 +59,7 @@ const BulkProductUpload: React.FC = () => {
     try {
       const data = await file.arrayBuffer();
       const workbook = XLSX.read(data);
-      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const worksheet = workbook.Sheets[workbook.SheetNames[5]];
       const rawData = XLSX.utils.sheet_to_json<any>(worksheet, { header: 1 }); // Use array of arrays
 
       // Find header row, value row, and width row
@@ -104,7 +104,7 @@ const BulkProductUpload: React.FC = () => {
               length: "",
               grade: "",
               price,
-              stock: 0,
+              stock: 1000,
             };
             productMap.get(key)!.variantList.push(variant);
           }
@@ -199,7 +199,7 @@ const BulkProductUpload: React.FC = () => {
         },
       ],
       price: Number(variant.price) || 0,
-      stock: Number(variant.stock) || 0,
+      stock: Number(variant.stock) || 1000,
       images: null,
     }));
   };
