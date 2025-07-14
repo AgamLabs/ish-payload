@@ -6,6 +6,7 @@ import { Price } from '@/components/Price'
 import React, { Suspense } from 'react'
 
 import { VariantSelector } from './VariantSelector'
+import { Breadcrumbs } from './Breadcrumbs'
 
 export function ProductDescription({ product }: { product: Product }) {
   const currency = 'INR'
@@ -28,8 +29,21 @@ export function ProductDescription({ product }: { product: Product }) {
     amount = product.price
   }
 
+  // Get first category if available and populated
+  let categoryData: { slug: string; name: string } | undefined = undefined
+  if (product.categories && product.categories.length > 0) {
+    const cat = product.categories[0]
+    if (typeof cat === 'object' && 'slug' in cat && 'title' in cat) {
+      categoryData = { slug: cat.slug, name: cat.title }
+    }
+  }
+
   return (
     <React.Fragment>
+      <Breadcrumbs
+        category={categoryData}
+        productTitle={product.title}
+      />
       <div className="mb-6 flex flex-col border-b pb-6 dark:border-neutral-700">
         <h1 className="mb-2 text-5xl font-medium">{product.title}</h1>
         <div className="mr-auto w-auto rounded-full bg-blue-600 p-2 text-sm text-white">
