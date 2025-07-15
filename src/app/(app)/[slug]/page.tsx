@@ -17,7 +17,6 @@ import Section5 from "@/components/ISH/Section5";
 import BlogSection from "@/components/ISH/BlogSection";
 import Section7 from "@/components/ISH/Section7";
 import Section8 from "@/components/ISH/Section8";
-import { getHomePageData } from "@/lib/getHomePageData";
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
@@ -57,10 +56,16 @@ export default async function Page({ params }: Args) {
     slug,
   });
 
+  // Get payload instance
+  const payload = await getPayload({ config: configPromise });
+
   // Fetch categories and home page data in parallel
   const [categories, homePageData] = await Promise.all([
     getCategories(),
-    slug === "home" ? getHomePageData() : Promise.resolve(null),
+    slug === "home" ? Promise.all([
+      payload.find({ collection: "products", limit: 10 }),
+      payload.find({ collection: "posts", limit: 5 })
+    ]).then(([products, posts]) => ({ products: products.docs, posts: posts.docs })) : Promise.resolve(null),
   ]);
 
   if (!page) {
@@ -75,10 +80,10 @@ export default async function Page({ params }: Args) {
         <>
           <RenderHero {...hero} />
           <Categories categories={categories} />
-          <Section3 products={homePageData?.featuredProducts || []} />
-          <Section4 products={homePageData?.popularProducts || []} />
+          <Section3 products={homePageData?.products || []} />
+          <Section4 products={homePageData?.products || []} />
           <Section5 />
-          <BlogSection posts={homePageData?.recentPosts || []} />
+          <BlogSection posts={homePageData?.posts || []} />
           <Section7 />
           <Section8 />
         </>

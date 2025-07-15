@@ -5,7 +5,7 @@ import {
 } from "@mui/icons-material";
 import Link from "next/link";
 import { Media, Product } from "@/payload-types";
-import OptimizedImage from "../../OptimizedImage";
+import Image from "next/image";
 
 interface Section4Props {
   products: Product[];
@@ -43,15 +43,14 @@ const Section4: React.FC<Section4Props> = ({ products }) => {
             >
               <div className="flex flex-col mx-auto mb-5">
                 <div className="relative w-[155px] h-[155px] sm:w-[270px] sm:h-[260px] mb-3">
-                  <OptimizedImage
-                    className="rounded-xl"
+                  <Image
+                    className="rounded-xl object-cover"
                     src={imageSrc}
                     alt={prd.title}
                     fill
                     loading="lazy"
                     sizes="(max-width: 640px) 155px, 270px"
                     quality={75}
-                    fallbackSrc="/media/image-hero1-3.webp"
                   />
                 </div>
                 <div>

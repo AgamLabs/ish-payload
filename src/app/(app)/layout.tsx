@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
-import { FooterWrapper } from '@/components/Footer/wrapper'
+import { Footer } from '@/components/Footer'
 import { Header } from '@/components/Header'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -57,7 +57,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
 
           <Header />
           <main>{children}</main>
-          <FooterWrapper key="footer-stable" />
+          <Footer />
         </Providers>
       </body>
     </html>

@@ -2,7 +2,7 @@ import React from "react";
 import Marquee from "react-fast-marquee";
 import landing from "../../../../data/data";
 import { Media, Product } from "@/payload-types";
-import OptimizedImage from "../../OptimizedImage";
+import Image from "next/image";
 
 interface Section3Props {
   products: Product[];
@@ -23,15 +23,14 @@ const Section3: React.FC<Section3Props> = ({ products }) => {
             return (
               <div className="flex flex-col mx-auto">
                 <div className="relative w-[270px] h-[260px] mb-3">
-                  <OptimizedImage
-                    className="rounded-xl"
+                  <Image
+                    className="rounded-xl object-cover"
                     src={imageSrc}
                     alt={prd.title}
                     fill
                     loading="lazy" // Lazy load since it's below the fold
                     sizes="(max-width: 768px) 100vw, 270px"
                     quality={75} // Reduce quality for better performance
-                    fallbackSrc="/media/image-hero1-2.webp"
                   />
                 </div>
                 <div>

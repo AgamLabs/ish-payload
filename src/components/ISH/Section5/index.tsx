@@ -1,11 +1,11 @@
 import landing from "../../../../data/data";
 import { ArrowForwardIosTwoTone } from "@mui/icons-material";
-import OptimizedImage from "../../OptimizedImage";
+import Image from "next/image";
 
 const Section5 = () => {
   return (
     <div className="relative w-full h-full">
-      <OptimizedImage
+      <Image
         src="/media/section5.avif"
         alt="Hero Image"
         fill
@@ -13,7 +13,6 @@ const Section5 = () => {
         loading="lazy" // Lazy load since it's below the fold
         sizes="100vw"
         quality={85}
-        fallbackSrc="/media/image-hero1-1.webp"
       />
     </div>
     // <div
