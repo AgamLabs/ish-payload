@@ -1,25 +1,15 @@
 import landing from "../../../../data/data";
 import { ArrowForwardIos } from "@mui/icons-material";
-import { getPayload } from "payload";
-import configPromise from "@payload-config";
 import { Media } from "@/components/Media";
 import { formatDate } from "@/lib/formatDate";
 import Link from "next/link";
+import { Post } from "@/payload-types";
 
-export default async function BlogSection() {
-  const payload = await getPayload({ config: configPromise });
+interface BlogSectionProps {
+  posts: Post[];
+}
 
-  const { docs: posts } = await payload.find({
-    collection: "posts",
-    limit: 6,
-    where: {
-      _status: {
-        equals: "published",
-      },
-    },
-    sort: "-publishedAt",
-    depth: 2,
-  });
+export default function BlogSection({ posts }: BlogSectionProps) {
 
   return (
     <section className="w-screen bg-white py-16 md:py-24 relative left-1/2 right-1/2 -mx-[50vw]">

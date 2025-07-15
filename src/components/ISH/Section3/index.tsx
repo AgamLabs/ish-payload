@@ -1,28 +1,14 @@
 import React from "react";
-import Image from "next/image";
 import Marquee from "react-fast-marquee";
 import landing from "../../../../data/data";
-import configPromise from "@payload-config";
-import { getPayload } from "payload";
 import { Media, Product } from "@/payload-types";
+import OptimizedImage from "../../OptimizedImage";
 
-async function getFeaturedProducts(): Promise<Product[]> {
-  const payload = await getPayload({ config: configPromise });
-  const featuredProducts = await payload.find({
-    collection: "products",
-    sort: "title",
-    where: {
-      // Your filtering criteria
-      _status: { equals: "published" },
-    },
-    limit: 5,
-  });
-
-  return featuredProducts.docs || null;
+interface Section3Props {
+  products: Product[];
 }
 
-const Section3 = async () => {
-  const products = await getFeaturedProducts();
+const Section3: React.FC<Section3Props> = ({ products }) => {
 
   return (
     <div className="py-10 px-5">
@@ -37,11 +23,15 @@ const Section3 = async () => {
             return (
               <div className="flex flex-col mx-auto">
                 <div className="relative w-[270px] h-[260px] mb-3">
-                  <Image
+                  <OptimizedImage
                     className="rounded-xl"
                     src={imageSrc}
                     alt={prd.title}
                     fill
+                    loading="lazy" // Lazy load since it's below the fold
+                    sizes="(max-width: 768px) 100vw, 270px"
+                    quality={75} // Reduce quality for better performance
+                    fallbackSrc="/media/image-hero1-2.webp"
                   />
                 </div>
                 <div>

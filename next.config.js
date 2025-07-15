@@ -18,6 +18,22 @@ const nextConfig = {
         };
       }),
     ],
+    // Enable image optimization
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    // Fix Windows long path issues
+    path: '/_next/image',
+    loader: 'default',
+    // Reduce filename length issues
+    domains: [],
+  },
+  // Fix Windows path issues
+  experimental: {
+    esmExternals: 'loose',
   },
   reactStrictMode: true,
   redirects,

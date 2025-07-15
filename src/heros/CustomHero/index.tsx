@@ -28,7 +28,10 @@ export const CustomHero: React.FC<Page["hero"]> = ({
 
     updateOrientation(); // initial check
     window.addEventListener("resize", updateOrientation);
-    return () => window.removeEventListener("resize", updateOrientation);
+    
+    return () => {
+      window.removeEventListener("resize", updateOrientation);
+    };
   }, [setHeaderTheme]);
 
   const mediaItems: Media[] = Array.isArray(mediaArray)
@@ -54,13 +57,16 @@ export const CustomHero: React.FC<Page["hero"]> = ({
       : mediaItems.slice(0, 2); // desktop
 
   return (
-    <section className="relative w-full h-full">
-      <div ref={sliderRef} className="keen-slider w-full h-full">
+    <section className="relative w-full h-full overflow-hidden">
+      <div 
+        ref={sliderRef} 
+        className="keen-slider w-full h-full"
+      >
         {imagesToShow.length > 0 ? (
           imagesToShow.map((img, i) => (
             <div key={i} className="keen-slider__slide relative w-full h-full">
               <img
-                className="object-cover w-full h-full transition-opacity duration-1000"
+                className="object-cover w-full h-full"
                 src={img?.url || "/media/image-hero1.webp"}
                 alt={`Hero image ${i + 1}`}
               />

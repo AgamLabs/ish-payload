@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
-import { Footer } from '@/components/Footer'
+import { FooterWrapper } from '@/components/Footer/wrapper'
 import { Header } from '@/components/Header'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -46,15 +46,18 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        {/* Preload critical images */}
+        <link rel="preload" href="/media/image-hero1.webp" as="image" />
+        <link rel="preload" href="/media/logo/companylogo.png" as="image" />
       </head>
       <body className="bg-neutral-50 text-black selection:bg-teal-300 dark:bg-neutral-900 dark:text-white dark:selection:bg-pink-500 dark:selection:text-white">
         <Providers>
           <AdminBar />
-          <LivePreviewListener />
+          {process.env.NODE_ENV === 'development' && <LivePreviewListener />}
 
           <Header />
           <main>{children}</main>
-          <Footer />
+          <FooterWrapper key="footer-stable" />
         </Providers>
       </body>
     </html>

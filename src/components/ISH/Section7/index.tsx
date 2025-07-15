@@ -1,7 +1,6 @@
 "use client";
 import landing from "../../../../data/data";
 import { ArrowForwardIosTwoTone, KeyboardArrowDown } from "@mui/icons-material";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 const Section7 = () => {

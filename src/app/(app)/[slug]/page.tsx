@@ -17,6 +17,7 @@ import Section5 from "@/components/ISH/Section5";
 import BlogSection from "@/components/ISH/BlogSection";
 import Section7 from "@/components/ISH/Section7";
 import Section8 from "@/components/ISH/Section8";
+import { getHomePageData } from "@/lib/getHomePageData";
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise });
@@ -56,7 +57,11 @@ export default async function Page({ params }: Args) {
     slug,
   });
 
-  const categories = await getCategories();
+  // Fetch categories and home page data in parallel
+  const [categories, homePageData] = await Promise.all([
+    getCategories(),
+    slug === "home" ? getHomePageData() : Promise.resolve(null),
+  ]);
 
   if (!page) {
     return <PayloadRedirects url={url} />;
@@ -70,10 +75,10 @@ export default async function Page({ params }: Args) {
         <>
           <RenderHero {...hero} />
           <Categories categories={categories} />
-          <Section3 />
-          <Section4 />
+          <Section3 products={homePageData?.featuredProducts || []} />
+          <Section4 products={homePageData?.popularProducts || []} />
           <Section5 />
-          <BlogSection />
+          <BlogSection posts={homePageData?.recentPosts || []} />
           <Section7 />
           <Section8 />
         </>

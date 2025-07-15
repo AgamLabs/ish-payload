@@ -1,13 +1,21 @@
 import landing from "../../../../data/data";
 import { ArrowForwardIosTwoTone } from "@mui/icons-material";
+import OptimizedImage from "../../OptimizedImage";
 
 const Section5 = () => {
   return (
-    <img
-      src="media/section5.avif"
-      alt="Hero Image"
-      className="w-full h-full object-cover"
-    />
+    <div className="relative w-full h-full">
+      <OptimizedImage
+        src="/media/section5.avif"
+        alt="Hero Image"
+        fill
+        className="object-cover"
+        loading="lazy" // Lazy load since it's below the fold
+        sizes="100vw"
+        quality={85}
+        fallbackSrc="/media/image-hero1-1.webp"
+      />
+    </div>
     // <div
     //   className=" max-sm:px-5 font-oxygen text-white md:flex gap-10 justify-between py-40 px-10 xl:px-20 bg-cover bg-center bg-black bg-blend-overlay bg-opacity-40"
     //   style={{ backgroundImage: "url('media/image-hero1-1.webp')" }}

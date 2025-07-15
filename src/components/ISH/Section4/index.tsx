@@ -3,28 +3,15 @@ import {
   AddCircleOutlineOutlined,
   ArrowForwardIosTwoTone,
 } from "@mui/icons-material";
-import Image from "next/image";
 import Link from "next/link";
-import configPromise from "@payload-config";
-import { getPayload } from "payload";
 import { Media, Product } from "@/payload-types";
+import OptimizedImage from "../../OptimizedImage";
 
-async function getPopularProducts(): Promise<Product[]> {
-  const payload = await getPayload({ config: configPromise });
-  const popularProducts = await payload.find({
-    collection: "products",
-    where: {
-      // Your filtering criteria
-      _status: { equals: "published" },
-    },
-    limit: 8,
-  });
-
-  return popularProducts.docs || null;
+interface Section4Props {
+  products: Product[];
 }
 
-const Section4 = async () => {
-  const products = await getPopularProducts();
+const Section4: React.FC<Section4Props> = ({ products }) => {
 
   return (
     <div className="py-10 px-3">
@@ -56,11 +43,15 @@ const Section4 = async () => {
             >
               <div className="flex flex-col mx-auto mb-5">
                 <div className="relative w-[155px] h-[155px] sm:w-[270px] sm:h-[260px] mb-3">
-                  <Image
+                  <OptimizedImage
                     className="rounded-xl"
                     src={imageSrc}
                     alt={prd.title}
                     fill
+                    loading="lazy"
+                    sizes="(max-width: 640px) 155px, 270px"
+                    quality={75}
+                    fallbackSrc="/media/image-hero1-3.webp"
                   />
                 </div>
                 <div>
