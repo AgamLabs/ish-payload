@@ -42,7 +42,10 @@ export const CustomHero: React.FC<Page["hero"]> = ({
 
   const [sliderRef] = useKeenSlider<HTMLDivElement>({
     loop: true,
-    slides: { perView: 1 },
+    slides: { 
+      perView: 1,
+      spacing: 0 
+    },
     animationEnded: (s) => s.moveToIdx(s.track.details.rel, true, { duration: 800 }),
     created: (s) => {
       setInterval(() => {
@@ -61,10 +64,13 @@ export const CustomHero: React.FC<Page["hero"]> = ({
       <div 
         ref={sliderRef} 
         className="keen-slider w-full h-full"
+        style={{
+          overflow: 'hidden'
+        }}
       >
         {imagesToShow.length > 0 ? (
           imagesToShow.map((img, i) => (
-            <div key={i} className="keen-slider__slide relative w-full h-full">
+            <div key={i} className="keen-slider__slide relative w-full h-full flex-shrink-0" style={{ flex: '0 0 100%', minWidth: '100%' }}>
               <img
                 className="object-cover w-full h-full"
                 src={img?.url || "/media/image-hero1.webp"}
@@ -73,7 +79,7 @@ export const CustomHero: React.FC<Page["hero"]> = ({
             </div>
           ))
         ) : (
-          <div className="keen-slider__slide relative w-full h-full">
+          <div className="keen-slider__slide relative w-full h-full flex-shrink-0" style={{ flex: '0 0 100%', minWidth: '100%' }}>
             <img
               className="object-cover w-full h-full"
               src="/media/image-hero1.webp"
