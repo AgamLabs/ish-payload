@@ -65,7 +65,7 @@ export default async function Order({ params, searchParams }: PageProps) {
         </div>
       )}
       <hr className="my-8" />
-      <div className="prose dark:prose-invert">
+      <div className="prose">
         <h1>
           <span className="">{`Order #${order.id}`}</span>
         </h1>

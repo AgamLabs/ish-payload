@@ -56,7 +56,7 @@ export const LoginForm: React.FC = () => {
         <Input id="password" type="password" {...register('password', { required: true })} />
       </div>
 
-      <div className="text-primary/70 mb-6 prose hover:prose-a:text-primary dark:prose-invert">
+      <div className="text-primary/70 mb-6 prose hover:prose-a:text-primary">
         <p>
           Forgot your password?{' '}
           <Link href={`/recover-password${allParams}`}>Click here to reset it</Link>

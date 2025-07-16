@@ -42,7 +42,7 @@ export default async function Orders() {
 
   return (
     <div className="container my-16">
-      <div className="prose dark:prose-invert mb-12">
+      <div className="prose mb-12">
         <h1>Orders</h1>
         {(!orders || !Array.isArray(orders) || orders?.length === 0) && (
           <p className="">You have no orders.</p>

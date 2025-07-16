@@ -94,7 +94,7 @@ export const CheckoutPage: React.FC = () => {
     <div className="container mx-auto p-8">
       <div className="max-w-4xl mx-auto">
         {!user && (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 mb-8">
+          <div className="bg-gray-100 rounded-lg p-6 mb-8">
             <div className="flex items-center space-x-4">
               <Button asChild variant="outline">
                 <Link href="/login">Log in</Link>
@@ -108,14 +108,14 @@ export const CheckoutPage: React.FC = () => {
         )}
 
         {user ? (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 mb-8">
+          <div className="bg-gray-100 rounded-lg p-6 mb-8">
             <p className="text-lg">Checking out as {user.email}</p>
             <p className="text-sm mt-2">
               Not you? <Link href="/logout" className="text-blue-500 hover:text-blue-600">Log out</Link>
             </p>
           </div>
         ) : (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6 mb-8">
+          <div className="bg-gray-100 rounded-lg p-6 mb-8">
             <h3 className="text-lg font-semibold mb-4">Guest Checkout</h3>
             <div className="max-w-md">
               <Label htmlFor="email">Email Address</Label>
@@ -149,16 +149,16 @@ export const CheckoutPage: React.FC = () => {
             </Button>
           </div>
         ) : (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-6">
+          <div className="bg-gray-100 rounded-lg p-6">
             <h2 className="text-2xl font-bold mb-6">Order Summary</h2>
             <div className="space-y-4">
               {cart?.items?.map((item, index) => {
                 if (typeof item.product === 'object' && item.product) {
                   return (
-                    <div key={index} className="flex justify-between items-center py-4 border-b border-gray-200 dark:border-gray-700">
+                    <div key={index} className="flex justify-between items-center py-4 border-b border-gray-200">
                       <div>
                         <h3 className="font-medium">{item.product.title}</h3>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Quantity: {item.quantity}</p>
+                        <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                       </div>
                       <Price amount={(item.product.price || 0) * (item.quantity || 1)} currencyCode="INR" />
                     </div>

@@ -99,7 +99,7 @@ export const CreateAccountForm: React.FC = () => {
 
   return (
     <form className="max-w-lg py-4" onSubmit={handleSubmit(onSubmit)}>
-      <div className="prose dark:prose-invert mb-6">
+      <div className="prose mb-6">
         <p>{`Create your account to get started. All fields are required.`}</p>
       </div>
       <Message className="classes.message" error={error} />
@@ -252,7 +252,7 @@ export const CreateAccountForm: React.FC = () => {
         {loading ? "Processing" : "Create Account"}
       </Button>
 
-      <div className="prose dark:prose-invert mt-8">
+      <div className="prose mt-8">
         <p>
           {"Already have an account? "}
           <Link href={`/login${allParams}`}>Login</Link>

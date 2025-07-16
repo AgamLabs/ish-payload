@@ -6,7 +6,7 @@ import React from 'react'
 export default function SearchLayout({ children }: { children: React.ReactNode }) {
   return (
     <React.Fragment>
-      <div className="container flex flex-col gap-8 my-16 pb-4 text-black md:flex-row dark:text-white">
+      <div className="container flex flex-col gap-8 my-16 pb-4 text-black md:flex-row">
         <div className="order-first w-full flex-none md:max-w-[125px]">
           <Categories />
         </div>

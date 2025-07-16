@@ -131,7 +131,7 @@ export function CartModal() {
 
                   return (
                     <li
-                      className="flex w-full flex-col border-b border-neutral-300 dark:border-neutral-700"
+                      className="flex w-full flex-col border-b border-neutral-300"
                       key={i}
                     >
                       <div className="relative flex w-full flex-row justify-between px-1 py-4">
@@ -142,7 +142,7 @@ export function CartModal() {
                           className="z-30 flex flex-row space-x-4"
                           href={item.url}
                         >
-                          <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
+                          <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300">
                             {typeof image === "object" && image?.url && (
                               <Image
                                 alt={
@@ -168,7 +168,7 @@ export function CartModal() {
                                 : ""}
                             </span>
                             {isVariant && variant ? (
-                              <p className="text-sm text-neutral-500 dark:text-neutral-400 capitalize">
+                              <p className="text-sm text-neutral-500 capitalize">
                                 {variant.options
                                   ?.map((option) => {
                                     return option.label;
@@ -186,7 +186,7 @@ export function CartModal() {
                               currencyCode={"INR"}
                             />
                           )}
-                          <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200 dark:border-neutral-700">
+                          <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-neutral-200">
                             <EditItemQuantityButton item={item} type="minus" />
                             <p className="w-6 text-center">
                               <span className="w-full text-sm">
@@ -202,12 +202,12 @@ export function CartModal() {
                 })}
               </ul>
               <div>
-                <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
-                  <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
+                <div className="py-4 text-sm text-neutral-500">
+                  <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1">
                     <p>Total</p>
                     <Price
                       amount={cartTotal.amount}
-                      className="text-right text-base text-black dark:text-white"
+                      className="text-right text-base text-black"
                       currencyCode={cartTotal.currency}
                     />
                   </div>

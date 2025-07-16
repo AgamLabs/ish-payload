@@ -112,7 +112,7 @@ export default async function Account() {
         <AccountForm />
 
         <hr className="my-16" />
-        <div className="prose dark:prose-invert mb-8">
+        <div className="prose mb-8">
           <h2>Orders</h2>
           <p>
             These are the orders you have placed over time. Each order is

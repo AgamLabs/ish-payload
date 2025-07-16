@@ -31,16 +31,20 @@ export async function GET(
       return new Response('No path provided', { status: 404 })
     }
 
-    if (!collection) {
-      return new Response('No path provided', { status: 404 })
-    }
-
-    if (!slug) {
-      return new Response('No path provided', { status: 404 })
-    }
-
-    if (!path.startsWith('/')) {
-      return new Response('This endpoint can only be used for internal previews', { status: 500 })
+    // For pages collection, we can preview with just the path
+    // For other collections, we need collection and slug
+    if (!collection || !slug) {
+      // If we have a path but no collection/slug, assume it's a page preview
+      if (!path.startsWith('/')) {
+        return new Response('This endpoint can only be used for internal previews', { status: 500 })
+      }
+      
+      // Allow page previews with just path
+    } else {
+      // Validate collection and slug for other types
+      if (!path.startsWith('/')) {
+        return new Response('This endpoint can only be used for internal previews', { status: 500 })
+      }
     }
 
     let user
@@ -65,27 +69,53 @@ export async function GET(
     }
 
     // Verify the given slug exists
-    try {
-      const docs = await payload.find({
-        collection,
-        draft: true,
-        limit: 1,
-        // pagination: false reduces overhead if you don't need totalDocs
-        pagination: false,
-        depth: 0,
-        select: {},
-        where: {
-          slug: {
-            equals: slug,
+    if (collection && slug) {
+      try {
+        const docs = await payload.find({
+          collection,
+          draft: true,
+          limit: 1,
+          // pagination: false reduces overhead if you don't need totalDocs
+          pagination: false,
+          depth: 0,
+          select: {},
+          where: {
+            slug: {
+              equals: slug,
+            },
           },
-        },
-      })
+        })
 
-      if (!docs.docs.length) {
-        return new Response('Document not found', { status: 404 })
+        if (!docs.docs.length) {
+          return new Response('Document not found', { status: 404 })
+        }
+      } catch (error) {
+        payload.logger.error({ err: error }, 'Error verifying document for live preview')
       }
-    } catch (error) {
-      payload.logger.error({ err: error }, 'Error verifying token for live preview')
+    } else {
+      // For page previews with just path, verify the page exists
+      try {
+        const pageSlug = path === '/' ? 'home' : path.replace('/', '')
+        const docs = await payload.find({
+          collection: 'pages',
+          draft: true,
+          limit: 1,
+          pagination: false,
+          depth: 0,
+          select: {},
+          where: {
+            slug: {
+              equals: pageSlug,
+            },
+          },
+        })
+
+        if (!docs.docs.length) {
+          return new Response('Page not found', { status: 404 })
+        }
+      } catch (error) {
+        payload.logger.error({ err: error }, 'Error verifying page for live preview')
+      }
     }
 
     draft.enable()
