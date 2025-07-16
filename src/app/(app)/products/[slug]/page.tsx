@@ -174,7 +174,7 @@ function RelatedProducts({ products }: { products: Product[] }) {
           >
             <Link
               className="relative h-full w-full"
-              href={`/product/${product.slug}`}
+              href={`/products/${product.slug}`}
             >
               <GridTileImage
                 label={{

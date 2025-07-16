@@ -29,15 +29,16 @@ export const CarouselBlock: React.FC<
       collection: 'products',
       depth: 1,
       limit: limit || undefined,
-      ...(flattenedCategories && flattenedCategories.length > 0
-        ? {
-            where: {
+      where: {
+        _status: { equals: 'published' },
+        ...(flattenedCategories && flattenedCategories.length > 0
+          ? {
               categories: {
                 in: flattenedCategories,
               },
-            },
-          }
-        : {}),
+            }
+          : {}),
+      },
     })
 
     products = fetchedProducts.docs

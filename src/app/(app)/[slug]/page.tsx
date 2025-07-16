@@ -62,10 +62,27 @@ export default async function Page({ params }: Args) {
   // Fetch categories and home page data in parallel
   const [categories, homePageData] = await Promise.all([
     getCategories(),
-    slug === "home" ? Promise.all([
-      payload.find({ collection: "products", limit: 10 }),
-      payload.find({ collection: "posts", limit: 5 })
-    ]).then(([products, posts]) => ({ products: products.docs, posts: posts.docs })) : Promise.resolve(null),
+    slug === "home"
+      ? Promise.all([
+          payload.find({
+            collection: "products",
+            limit: 10,
+            where: {
+              _status: { equals: "published" },
+            },
+          }),
+          payload.find({ 
+            collection: "posts", 
+            limit: 5,
+            where: {
+              _status: { equals: "published" },
+            },
+          }),
+        ]).then(([products, posts]) => ({
+          products: products.docs,
+          posts: posts.docs,
+        }))
+      : Promise.resolve(null),
   ]);
 
   if (!page) {

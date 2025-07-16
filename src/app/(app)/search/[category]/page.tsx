@@ -55,6 +55,7 @@ export default async function SearchCategoryPage(props: {
     ...(sort ? { sort } : { sort: "title" }),
     where: {
       and: [
+        { _status: { equals: 'published' } },
         ...(categoryDoc ? [{ categories: { contains: categoryDoc.id } }] : []),
         {
           or: [

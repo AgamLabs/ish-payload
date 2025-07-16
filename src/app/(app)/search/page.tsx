@@ -30,9 +30,10 @@ export default async function SearchPage({ searchParams }: Props) {
       price: true,
     },
     ...(sort ? { sort } : { sort: 'title' }),
-    ...(searchValue
-      ? {
-          where: {
+    where: {
+      _status: { equals: 'published' },
+      ...(searchValue
+        ? {
             or: [
               {
                 title: {
@@ -45,9 +46,9 @@ export default async function SearchPage({ searchParams }: Props) {
                 },
               },
             ],
-          },
-        }
-      : {}),
+          }
+        : {}),
+    },
   })
 
   const resultsText = products.docs.length > 1 ? 'results' : 'result'

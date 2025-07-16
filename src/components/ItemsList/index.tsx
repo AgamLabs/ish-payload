@@ -13,7 +13,7 @@ interface Props {
 
 export const ItemsList: React.FC<Props> = ({ items }) => {
   return (
-    <ul className="flex-grow overflow-auto py-4">
+    <ul className="flex-grow py-4">
       {items?.map((item, _i) => {
         if (typeof item.product === 'string' || !item) return <React.Fragment key={item.id} />
 
@@ -53,7 +53,7 @@ if (isVariant) {
   }
 }
 
-        const url = `/product/${typeof product === 'object' ? product?.slug : ''}${isVariant ? `?variant=${item.variant}` : ''}`
+        const url = `/products/${typeof product === 'object' ? product?.slug : ''}${isVariant ? `?variant=${item.variant}` : ''}`
 
         return (
           <li

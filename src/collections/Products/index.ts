@@ -60,14 +60,14 @@ export const Products: CollectionConfig = {
     livePreview: {
       url: ({ data }) => {
         const path = generatePreviewPath({
-          path: `/product/${typeof data?.slug === "string" ? data.slug : ""}`,
+          path: `/products/${typeof data?.slug === "string" ? data.slug : ""}`,
         });
         return `${process.env.NEXT_PUBLIC_SERVER_URL}${path}`;
       },
     },
     preview: (doc) =>
       generatePreviewPath({
-        path: `/product/${typeof doc?.slug === "string" ? doc.slug : ""}`,
+        path: `/products/${typeof doc?.slug === "string" ? doc.slug : ""}`,
       }),
     useAsTitle: "title",
     components: {
