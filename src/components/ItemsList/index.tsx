@@ -57,12 +57,12 @@ if (isVariant) {
 
         return (
           <li
-            className="flex w-full flex-col border-b border-neutral-300 dark:border-neutral-700"
+            className="flex w-full flex-col border-b border-neutral-300"
             key={item.id}
           >
             <div className="relative flex w-full flex-row justify-between px-1 py-4">
               <Link className="z-30 flex flex-row space-x-4" href={url}>
-                <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:hover:bg-neutral-800">
+                <div className="relative h-16 w-16 cursor-pointer overflow-hidden rounded-md border border-neutral-300 bg-neutral-300">
                   {media?.url && (
                     <Image
                       alt={media.alt || (typeof product === 'object' ? product?.title : '') || ''}
@@ -77,7 +77,7 @@ if (isVariant) {
                 <div className="flex flex-1 flex-col text-base">
                   <span className="leading-tight">{typeof product === 'object' ? product?.title : ''}</span>
                   {isVariant && info?.options?.length ? (
-                    <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                    <p className="text-sm text-neutral-500">
                       {info.options
                         ?.map((option) => {
                           return option.label

@@ -240,22 +240,22 @@ const BulkProductUpload: React.FC = () => {
 
   return (
     <div className="max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
         Bulk Product Upload
       </h2>
 
       {/* Upload Controls */}
-      <div className="bg-white dark:bg-neutral-900 shadow rounded-lg p-6 mb-6 flex flex-col sm:flex-row items-center gap-4">
+      <div className="bg-white shadow rounded-lg p-6 mb-6 flex flex-col sm:flex-row items-center gap-4">
         <Input
           type="file"
           accept=".xlsx,.csv"
           onChange={handleFileUpload}
-          className="flex-1 min-w-0 border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white"
+          className="flex-1 min-w-0 border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
         />
         <Button
           onClick={() => generateProductUploadTemplate()}
           variant="outline"
-          className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-800 dark:bg-neutral-800 dark:text-white dark:hover:bg-neutral-700 border border-gray-300 dark:border-neutral-700 rounded shadow-sm px-4 py-2"
+          className="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-300 rounded shadow-sm px-4 py-2"
         >
           Download Template
         </Button>
@@ -273,24 +273,24 @@ const BulkProductUpload: React.FC = () => {
         <>
           <div className="overflow-x-auto rounded-lg shadow mb-6">
             <Table className="min-w-full divide-y divide-gray-200">
-              <TableHeader className="bg-gray-50 dark:bg-neutral-800">
+              <TableHeader className="bg-gray-50">
                 <TableRow>
-                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">
+                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700">
                     Title
                   </TableHead>
-                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">
+                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700">
                     Price
                   </TableHead>
-                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-gray-200">
+                  <TableHead className="px-4 py-2 text-left font-semibold text-gray-700">
                     Category
                   </TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody className="bg-white dark:bg-neutral-900">
+              <TableBody className="bg-white">
                 {products.map((product, index) => (
                   <TableRow
                     key={index}
-                    className="hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
+                    className="hover:bg-gray-100 transition-colors"
                   >
                     <TableCell className="px-4 py-2">{product.title}</TableCell>
                     <TableCell className="px-4 py-2">

@@ -2,7 +2,6 @@ import { AuthProvider } from "@/providers/Auth";
 import { CartProvider } from "@/providers/Cart";
 import React from "react";
 
-import { HeaderThemeProvider } from "./HeaderTheme";
 import { ThemeProvider } from "./Theme";
 import { FilterProvider } from "./Filter";
 
@@ -12,9 +11,11 @@ export const Providers: React.FC<{
   return (
     <ThemeProvider>
       <AuthProvider>
-        <HeaderThemeProvider>
-            <CartProvider>{children}</CartProvider>
-        </HeaderThemeProvider>
+        <CartProvider>
+          <FilterProvider>
+            {children}
+          </FilterProvider>
+        </CartProvider>
       </AuthProvider>
     </ThemeProvider>
   );

@@ -1,5 +1,4 @@
 "use client";
-import { useHeaderTheme } from "@/providers/HeaderTheme";
 import React, { useEffect, useState } from "react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
@@ -12,12 +11,9 @@ export const CustomHero: React.FC<Page["hero"]> = ({
   mediaArray,
   richText,
 }) => {
-  const { setHeaderTheme } = useHeaderTheme();
   const [orientation, setOrientation] = useState<"portrait" | "landscape">("landscape");
 
   useEffect(() => {
-    setHeaderTheme("dark");
-
     const updateOrientation = () => {
       if (window.matchMedia("(orientation: portrait)").matches) {
         setOrientation("portrait");
@@ -32,7 +28,7 @@ export const CustomHero: React.FC<Page["hero"]> = ({
     return () => {
       window.removeEventListener("resize", updateOrientation);
     };
-  }, [setHeaderTheme]);
+  }, []);
 
   const mediaItems: Media[] = Array.isArray(mediaArray)
     ? mediaArray.map((item: any) => item?.media as Media).filter(Boolean)
