@@ -210,5 +210,7 @@ const queryProductBySlug = async ({ slug }: { slug: string }) => {
     },
   });
 
-  return result.docs?.[0] || null;
+  const product = result.docs?.[0] || null;
+
+  return product;
 };

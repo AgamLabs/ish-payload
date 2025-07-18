@@ -34,7 +34,9 @@ export const Price = ({
           currency: currencyCode,
           currencyDisplay: 'narrowSymbol',
           style: 'currency',
-        }).format(amount / 100)}`}
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(amount)}`}
       </p>
     )
   }
@@ -46,11 +48,15 @@ export const Price = ({
           currency: currencyCode,
           currencyDisplay: 'narrowSymbol',
           style: 'currency',
-        }).format(lowestAmount / 100)} - ${new Intl.NumberFormat(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(lowestAmount)} - ${new Intl.NumberFormat(undefined, {
           currency: currencyCode,
           currencyDisplay: 'narrowSymbol',
           style: 'currency',
-        }).format(highestAmount / 100)}`}
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(highestAmount)}`}
       </p>
     )
   }
@@ -62,7 +68,9 @@ export const Price = ({
           currency: currencyCode,
           currencyDisplay: 'narrowSymbol',
           style: 'currency',
-        }).format(lowestAmount / 100)}`}
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(lowestAmount)}`}
       </p>
     )
   }

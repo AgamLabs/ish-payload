@@ -5,7 +5,7 @@ import type { Product } from "@/payload-types";
 import { createUrl } from "@/utilities/createUrl";
 import clsx from "clsx";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 export function VariantSelector({ product }: { product: Product }) {
   const router = useRouter();
@@ -27,6 +27,49 @@ export function VariantSelector({ product }: { product: Product }) {
   const combinations = variants!.map((variant) => {
     return variant.options;
   });
+
+  // Effect to set variant parameter when all options are selected
+  useEffect(() => {
+    if (!variantOptions || !variants) return;
+    
+    // Get all current option selections
+    const allSelections: Record<string, string> = {};
+    variantOptions.forEach((option) => {
+      const value = searchParams.get(option.slug);
+      if (value) {
+        allSelections[option.slug] = value;
+      }
+    });
+    
+    // Check if all options are selected
+    const allSelected = variantOptions.every(option => allSelections[option.slug]);
+    
+    if (allSelected) {
+      // Find the matching variant
+      const matchingVariant = variants.find(variant => {
+        return Object.entries(allSelections).every(([key, value]) => {
+          return variant.options.some(opt => 
+            opt.slug === key && (opt.slug === value || opt.label === value)
+          );
+        });
+      });
+      
+      if (matchingVariant && matchingVariant.id) {
+        const newParams = new URLSearchParams(searchParams.toString());
+        newParams.set('variant', matchingVariant.id);
+        const newUrl = createUrl(pathname, newParams);
+        router.replace(newUrl, { scroll: false });
+      }
+    } else {
+      // If not all options are selected, remove variant parameter
+      const newParams = new URLSearchParams(searchParams.toString());
+      if (newParams.has('variant')) {
+        newParams.delete('variant');
+        const newUrl = createUrl(pathname, newParams);
+        router.replace(newUrl, { scroll: false });
+      }
+    }
+  }, [searchParams, variantOptions, variants, pathname, router]);
 
   // Track selected values for each option
   let selectedValues: Record<string, string | undefined> = {};
@@ -87,20 +130,37 @@ export function VariantSelector({ product }: { product: Product }) {
               // if the option was clicked.
               optionSearchParams.set(optionKeyLowerCase, option.slug);
 
-              const optionUrl = createUrl(pathname, optionSearchParams);
-
               // Find the variant that matches all selected options including this one
               const allSelections = {
                 ...selectedValues,
                 [optionKeyLowerCase]: option.slug,
               };
+              
               const matchingVariant = variants?.find((variant) => {
-                return variant.options.every((opt) => {
-                  const sel =
-                    allSelections[opt.slug] || allSelections[opt.label];
-                  return !sel || sel === opt.slug || sel === opt.label;
+                const variantOptions = variant.options || [];
+                
+                // Check if this variant matches all selected options
+                // We need to check if the variant has the exact combination of options that are selected
+                const matches = Object.entries(allSelections).every(([optionGroupKey, selectedValue]) => {
+                  if (!selectedValue) return true; // If no selection for this group, skip
+                  
+                  // Check if this variant has an option that matches the selected value
+                  const hasMatchingOption = variantOptions.some(opt => 
+                    opt.slug === selectedValue || opt.label === selectedValue
+                  );
+                  
+                  return hasMatchingOption;
                 });
+                
+                return matches;
               });
+
+              // Add the variant ID to the search params
+              if (matchingVariant?.id) {
+                optionSearchParams.set("variant", matchingVariant.id);
+              }
+
+              const optionUrl = createUrl(pathname, optionSearchParams);
 
               const isAvailableForSale = Boolean(
                 matchingVariant?.id && matchingVariant?.stock > 0
@@ -127,12 +187,9 @@ export function VariantSelector({ product }: { product: Product }) {
                   disabled={!isAvailableForSale}
                   key={option.slug}
                   onClick={() => {
-                    router.replace(
-                      `${optionUrl}&variant=${matchingVariant?.id || ""}`,
-                      {
-                        scroll: false,
-                      }
-                    );
+                    router.replace(optionUrl, {
+                      scroll: false,
+                    });
                   }}
                   title={`${option.label} ${!isAvailableForSale ? " (Out of Stock)" : ""}`}
                   type="button"
