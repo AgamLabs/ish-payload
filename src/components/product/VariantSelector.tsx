@@ -41,27 +41,50 @@ export function VariantSelector({ product }: { product: Product }) {
       }
     });
     
-    // Check if all options are selected
-    const allSelected = variantOptions.every(option => allSelections[option.slug]);
+    // Determine if we should set a variant based on current selections
+    const hasSelections = Object.keys(allSelections).length > 0;
+    const allRequiredSelected = variantOptions.every(option => allSelections[option.slug]);
     
-    if (allSelected) {
-      // Find the matching variant
+    if (hasSelections) {
+      // Find the best matching variant based on current selections
       const matchingVariant = variants.find(variant => {
+        // For single option products, match if we have that option selected
+        if (variantOptions.length === 1) {
+          const selectedOption = Object.entries(allSelections)[0];
+          if (selectedOption) {
+            const [key, value] = selectedOption;
+            return variant.options.some(opt => 
+              (opt.slug === key || opt.slug === value || opt.label === value) &&
+              (opt.slug === value || opt.label === value)
+            );
+          }
+        }
+        
+        // For multiple options, check if all selected options match this variant
         return Object.entries(allSelections).every(([key, value]) => {
           return variant.options.some(opt => 
-            opt.slug === key && (opt.slug === value || opt.label === value)
+            (opt.slug === key && (opt.slug === value || opt.label === value)) ||
+            (opt.slug === value || opt.label === value)
           );
         });
       });
       
+      const newParams = new URLSearchParams(searchParams.toString());
+      
       if (matchingVariant && matchingVariant.id) {
-        const newParams = new URLSearchParams(searchParams.toString());
         newParams.set('variant', matchingVariant.id);
-        const newUrl = createUrl(pathname, newParams);
-        router.replace(newUrl, { scroll: false });
+      } else if (!allRequiredSelected) {
+        // For multi-option products, remove variant if not all options selected
+        // For single-option products, keep trying to match
+        if (variantOptions.length > 1) {
+          newParams.delete('variant');
+        }
       }
+      
+      const newUrl = createUrl(pathname, newParams);
+      router.replace(newUrl, { scroll: false });
     } else {
-      // If not all options are selected, remove variant parameter
+      // No selections made, remove variant parameter
       const newParams = new URLSearchParams(searchParams.toString());
       if (newParams.has('variant')) {
         newParams.delete('variant');
@@ -100,13 +123,18 @@ export function VariantSelector({ product }: { product: Product }) {
       }) || [];
 
     // For this selector, show only values that are present in the matching variants
-    let options = (key.values || []).filter((option) => {
-      return matchingVariants.some((variant) =>
-        variant.options.some(
-          (opt) => opt.slug === option.slug || opt.label === option.label
-        )
-      );
-    });
+    let options = key.values || [];
+    
+    // If there are previous selections, filter options based on available variants
+    if (prevSelections.some(sel => sel.value)) {
+      options = options.filter((option) => {
+        return matchingVariants.some((variant) =>
+          variant.options.some(
+            (opt) => opt.slug === option.slug || opt.label === option.label || opt.id === option.id
+          )
+        );
+      });
+    }
 
     return (
       <dl className="mb-8" key={key.slug}>
@@ -139,10 +167,17 @@ export function VariantSelector({ product }: { product: Product }) {
               const matchingVariant = variants?.find((variant) => {
                 const variantOptions = variant.options || [];
                 
-                // Check if this variant matches all selected options
-                // We need to check if the variant has the exact combination of options that are selected
+                // For single option products
+                if (Object.keys(allSelections).length === 1 && variantOptions?.length) {
+                  const [selectedKey, selectedValue] = Object.entries(allSelections)[0];
+                  return variantOptions.some(opt => 
+                    opt.slug === selectedValue || opt.label === selectedValue
+                  );
+                }
+                
+                // For multiple option products - check if this variant matches all selected options
                 const matches = Object.entries(allSelections).every(([optionGroupKey, selectedValue]) => {
-                  if (!selectedValue) return true; // If no selection for this group, skip
+                  if (!selectedValue) return true;
                   
                   // Check if this variant has an option that matches the selected value
                   const hasMatchingOption = variantOptions.some(opt => 
@@ -152,7 +187,19 @@ export function VariantSelector({ product }: { product: Product }) {
                   return hasMatchingOption;
                 });
                 
-                return matches;
+                // For single option products, we want to match immediately
+                // For multi-option products, we need all options to match
+                if (variantOptions?.length === 1) {
+                  return matches;
+                } else {
+                  // Check if we have selections for all required option groups
+                  const allRequiredGroupsSelected = variantOptions?.every(vOpt => 
+                    Object.values(allSelections).some(selectedVal => 
+                      vOpt.slug === selectedVal || vOpt.label === selectedVal
+                    )
+                  );
+                  return matches && allRequiredGroupsSelected;
+                }
               });
 
               // Add the variant ID to the search params

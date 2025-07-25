@@ -19,11 +19,20 @@ export function ProductDescription({ product }: { product: Product }) {
   // Update state when search params change
   useEffect(() => {
     const variantId = searchParams.get("variant");
-    const thickness = searchParams.get("thickness");
-    const width = searchParams.get("width");
+    
+    // Get all variant option parameter names
+    const variantParams: Record<string, string> = {};
+    if (product.variants?.options) {
+      product.variants.options.forEach((option) => {
+        const paramValue = searchParams.get(option.slug.toLowerCase());
+        if (paramValue) {
+          variantParams[option.slug.toLowerCase()] = paramValue;
+        }
+      });
+    }
     
     setCurrentVariantId(variantId);
-  }, [searchParams]);
+  }, [searchParams, product.variants?.options]);
 
   const hasVariants =
     product.enableVariants && product.variants?.variants?.length;
@@ -42,32 +51,37 @@ export function ProductDescription({ product }: { product: Product }) {
     }
   }
   
-  // If no variant ID but we have thickness/width parameters, try to match variant
-  if (hasVariants && !currentVariantId && product.variants?.variants) {
-    const thickness = searchParams.get("thickness");
-    const width = searchParams.get("width");
+  // If no variant ID but we have variant parameters, try to match variant
+  if (hasVariants && !currentVariantId && product.variants?.variants && product.variants?.options) {
+    // Get all current variant parameter selections
+    const variantSelections: Record<string, string> = {};
+    product.variants.options.forEach((option) => {
+      const paramValue = searchParams.get(option.slug.toLowerCase());
+      if (paramValue) {
+        variantSelections[option.slug.toLowerCase()] = paramValue;
+      }
+    });
     
-    if (thickness && width) {
-      // Find matching variant based on thickness and width
+    // Only try to match if we have selections
+    if (Object.keys(variantSelections).length > 0) {
+      // Find matching variant based on current selections
       const matchingVariant = product.variants.variants.find(variant => {
-        // Check if options is an array (new format)
-        if (Array.isArray(variant.options)) {
-          // Check if we have exactly 2 options (thickness and width)
-          if (variant.options.length !== 2) {
-            return false;
-          }
-          
-          // Get the option values (labels)
-          const variantValues = variant.options.map(opt => opt.label);
-          
-          // Check if both thickness and width values exist in variant values
-          const hasThickness = variantValues.includes(thickness);
-          const hasWidth = variantValues.includes(width);
-          
-          return hasThickness && hasWidth;
-        } else {
-          return false;
+        if (!Array.isArray(variant.options)) return false;
+        
+        // For single option products, match immediately
+        if (product.variants != null && product.variants.options.length === 1) {
+          const selectedValue = Object.values(variantSelections)[0];
+          return variant.options.some(opt => 
+            opt.slug === selectedValue || opt.label === selectedValue
+          );
         }
+        
+        // For multiple options, check if all selections match this variant
+        return Object.entries(variantSelections).every(([paramKey, selectedValue]) => {
+          return variant.options.some(opt => 
+            opt.slug === selectedValue || opt.label === selectedValue
+          );
+        });
       });
       
       if (matchingVariant) {
@@ -78,11 +92,13 @@ export function ProductDescription({ product }: { product: Product }) {
 
   // If no variant is selected but variants exist, use the first variant's price
   if (hasVariants && !currentVariantId && product.variants?.variants?.length) {
-    const thickness = searchParams.get("thickness");
-    const width = searchParams.get("width");
+    // Check if we have any variant parameter selections
+    const hasAnyVariantParams = product.variants.options?.some((option) => 
+      searchParams.get(option.slug.toLowerCase())
+    );
     
-    // Only use first variant price if no thickness/width params
-    if (!thickness && !width) {
+    // Only use first variant price if no variant params are selected
+    if (!hasAnyVariantParams) {
       currentPrice = product.variants.variants[0].price;
     }
   }
