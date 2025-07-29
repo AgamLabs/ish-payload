@@ -2,10 +2,10 @@
 
 import React from "react";
 import type { Product } from "@/payload-types";
-import type { Variant, VariantGroup, VariantSelections } from "./VariantSelector/types";
-import { OptionGroup } from "./VariantSelector/OptionGroup";
-import { useVariantSelections } from "./VariantSelector/useVariantSelections";
-import { getAvailableOptions } from "./VariantSelector/utils";
+import type { Variant, VariantGroup, VariantSelections } from "./types";
+import { OptionGroup } from "./OptionGroup";
+import { useVariantSelections } from "./useVariantSelections";
+import { getAvailableOptions } from "./utils";
 
 export function VariantSelector({ product }: { product: Product }) {
   // Type-safe data extraction
