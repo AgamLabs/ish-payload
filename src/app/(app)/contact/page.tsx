@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
 import { getClientSideURL } from '@/utilities/getURL';
 
 type ContactFormData = {
@@ -86,6 +86,23 @@ export default function ContactPage() {
     }
   };
 
+  const sendViaWhatsApp = (data: ContactFormData) => {
+    const message = `
+Hello! I have a steel inquiry:
+
+Name: ${data['full-name']}
+Email: ${data.email}
+Category: ${data.subject || 'General Inquiry'}
+Message: ${data.message}
+
+Please get back to me. Thank you!
+    `.trim();
+    
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/914426182020?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
+
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4">
@@ -153,6 +170,26 @@ export default function ContactPage() {
                   <p className="text-gray-600 mb-1">Chennai, Tamil Nadu 600040</p>
                   <p className="text-gray-900 font-medium">+91 44 2618 2020</p>
                   <a href="mailto:info@ishsteel.com" className="text-green-600 hover:underline">info@ishsteel.com</a>
+                </div>
+              </div>
+
+              {/* WhatsApp Contact */}
+              <div className="flex items-start space-x-4">
+                <div className="bg-green-100 p-3 rounded-full">
+                  <MessageCircle className="w-6 h-6 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">WhatsApp</h3>
+                  <p className="text-gray-600 mb-1">Get instant support via WhatsApp</p>
+                  <a 
+                    href="https://wa.me/914426182020?text=Hello,%20I%20would%20like%20to%20inquire%20about%20your%20steel%20products."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm font-medium transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Chat on WhatsApp
+                  </a>
                 </div>
               </div>
             </div>
@@ -250,20 +287,31 @@ export default function ContactPage() {
                   )}
                 </div>
 
-                <Button 
-                  type="submit" 
-                  disabled={isSubmitting}
-                  className="px-6 py-3 bg-customBlue hover:bg-customBlue/90 text-white rounded-3xl font-exo font-medium transition-colors"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                      Sending Message
-                    </>
-                  ) : (
-                    'Send Message'
-                  )}
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className="px-6 py-3 bg-customBlue hover:bg-customBlue/90 text-white rounded-3xl font-exo font-medium transition-colors"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                        Sending Message
+                      </>
+                    ) : (
+                      'Send Message'
+                    )}
+                  </Button>
+                  
+                  <Button 
+                    type="button"
+                    onClick={handleSubmit(sendViaWhatsApp)}
+                    className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-3xl font-exo font-medium transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Send via WhatsApp
+                  </Button>
+                </div>
               </form>
             </div>
 
