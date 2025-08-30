@@ -29,13 +29,13 @@ export const WhatsAppFloat: React.FC<WhatsAppFloatProps> = ({
     <div className={`fixed ${positionClasses[position]} z-50`}>
       <button
         onClick={handleWhatsAppClick}
-        className="group bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+        className="group glossy-float bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
         aria-label="Chat on WhatsApp"
       >
         <MessageCircle className="w-6 h-6" />
 
         {/* Tooltip */}
-        <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-sm py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+        <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 glossy-card bg-gray-900 text-white text-sm py-2 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
           Chat on WhatsApp
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
         </div>

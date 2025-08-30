@@ -1,1 +1,0 @@
-export { CustomContactForm } from './CustomContactForm';

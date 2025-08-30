@@ -105,20 +105,21 @@ Please get back to me. Thank you!
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center py-12 px-4">
+      <div className="min-h-screen glossy-bg flex items-center justify-center py-12 px-4">
         <div className="max-w-md mx-auto text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 glossy-float bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Send className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Thank You!</h2>
+          <h2 className="text-3xl font-bold glossy-text mb-4">Thank You!</h2>
           <p className="text-gray-600 mb-8 leading-relaxed">
             Your message has been sent successfully. We'll get back to you within 24 hours.
           </p>
           <Button 
             onClick={() => setIsSubmitted(false)}
-            className="px-6 py-3 bg-customBlue hover:bg-customBlue/90 text-white rounded-3xl font-exo font-medium transition-colors"
+            className="glossy-button px-6 py-3 bg-customBlue hover:bg-customBlue/90 text-white font-semibold rounded-3xl font-exo transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl [&>*]:text-white"
+            style={{ color: 'white', backgroundColor: '#00416A' }}
           >
-            Send Another Message
+            <span className="text-white">Send Another Message</span>
           </Button>
         </div>
       </div>
@@ -126,18 +127,18 @@ Please get back to me. Thank you!
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen glossy-bg">
       {/* Hero Section */}
       <div 
-        className="relative h-80 bg-cover bg-center bg-no-repeat"
+        className="relative h-80 bg-cover bg-center bg-no-repeat glossy-hero"
         style={{
-          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1565728744382-61accd4aa148?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
+          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1565728744382-61accd4aa148?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
         }}
       >
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4">Ask Us Question</h1>
-            <p className="text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 glossy-text-white">Ask Us Question</h1>
+            <p className="text-lg md:text-xl max-w-2xl mx-auto leading-relaxed glossy-text-white">
               Have questions about our premium steel products and services? We're here to help you find the perfect 
               steel solutions for your construction and industrial needs.
             </p>
@@ -146,11 +147,11 @@ Please get back to me. Thank you!
       </div>
 
       {/* Contact Information Section */}
-      <div className="py-16 bg-gray-50">
+      <div className="py-16 glossy-bg">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">You can ask us questions !</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold glossy-text mb-4">You can ask us questions !</h2>
+            <p className="text-gray-700 max-w-2xl mx-auto">
               Get ready to buy our best steel products and materials. Connect with our experts 
               to find the perfect steel solutions for your construction and industrial projects.
             </p>
@@ -160,42 +161,47 @@ Please get back to me. Thank you!
             {/* Contact Details */}
             <div className="space-y-8">
               {/* Chennai Office */}
-              <div className="flex items-start space-x-4">
-                <div className="bg-green-100 p-3 rounded-full">
-                  <MapPin className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Chennai Office</h3>
-                  <p className="text-gray-600 mb-1">AC 5, 2nd Ave, AC Block, Anna Nagar,</p>
-                  <p className="text-gray-600 mb-1">Chennai, Tamil Nadu 600040</p>
-                  <p className="text-gray-900 font-medium">+91 44 2618 2020</p>
-                  <a href="mailto:info@ishsteel.com" className="text-green-600 hover:underline">info@ishsteel.com</a>
+              <div className="glossy-card p-6 rounded-xl">
+                <div className="flex items-start space-x-4">
+                  <div className="glossy-float bg-green-100 p-3 rounded-full">
+                    <MapPin className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Chennai Office</h3>
+                    <p className="text-gray-600 mb-1">AC 5, 2nd Ave, AC Block, Anna Nagar,</p>
+                    <p className="text-gray-600 mb-1">Chennai, Tamil Nadu 600040</p>
+                    <p className="text-gray-900 font-medium">+91 44 2618 2020</p>
+                    <a href="mailto:info@ishsteel.com" className="text-green-600 hover:underline">info@ishsteel.com</a>
+                  </div>
                 </div>
               </div>
 
               {/* WhatsApp Contact */}
-              <div className="flex items-start space-x-4">
-                <div className="bg-green-100 p-3 rounded-full">
-                  <MessageCircle className="w-6 h-6 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">WhatsApp</h3>
-                  <p className="text-gray-600 mb-1">Get instant support via WhatsApp</p>
-                  <a 
-                    href="https://wa.me/914426182020?text=Hello,%20I%20would%20like%20to%20inquire%20about%20your%20steel%20products."
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm font-medium transition-colors"
-                  >
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Chat on WhatsApp
-                  </a>
+              <div className="glossy-card p-6 rounded-xl">
+                <div className="flex items-start space-x-4">
+                  <div className="glossy-float bg-green-100 p-3 rounded-full">
+                    <MessageCircle className="w-6 h-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">WhatsApp</h3>
+                    <p className="text-gray-600 mb-3">Get instant support via WhatsApp</p>
+                    <a 
+                      href="https://wa.me/914426182020?text=Hello,%20I%20would%20like%20to%20inquire%20about%20your%20steel%20products."
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="glossy-button inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full text-sm transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl [&>*]:text-white"
+                      style={{ color: 'white', backgroundColor: '#059669' }}
+                    >
+                      <MessageCircle className="w-4 h-4 mr-2 text-white" />
+                      <span className="text-white">Chat on WhatsApp</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Map */}
-            <div className="bg-white rounded-lg shadow-lg overflow-hidden h-96">
+            <div className="glossy-card rounded-xl overflow-hidden h-96">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.8515207778706!2d80.22098931482195!3d13.085170990778887!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5265f1b8a5b3a3%3A0x8b5b1b0b5b1b5b1b!2sAnna%20Nagar%2C%20Chennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1703123456789!5m2!1sen!2sin"
                 width="100%"
@@ -212,18 +218,18 @@ Please get back to me. Thank you!
       </div>
 
       {/* Contact Form Section */}
-      <div className="py-16 bg-white">
+      <div className="py-16 glossy-bg">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Form */}
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <div className="glossy-card p-8 rounded-xl">
+              <h2 className="text-3xl font-bold glossy-text mb-6">
                 Fill Up The Form If You Have Any Question
               </h2>
               
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="glossy-form">
                 {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <div className="glossy-card bg-red-50 border border-red-200 rounded-lg p-4">
                     <p className="text-red-600 text-sm">{error}</p>
                   </div>
                 )}
@@ -233,7 +239,7 @@ Please get back to me. Thank you!
                     <Input
                       {...register('full-name', { required: 'Name is required' })}
                       placeholder="Name*"
-                      className="h-12 border-gray-300 rounded-lg"
+                      className="no-glossy h-12 border-gray-300 rounded-lg"
                     />
                     {errors['full-name'] && (
                       <p className="text-red-500 text-sm mt-1">{errors['full-name'].message}</p>
@@ -251,7 +257,7 @@ Please get back to me. Thank you!
                         },
                       })}
                       placeholder="E-mail*"
-                      className="h-12 border-gray-300 rounded-lg"
+                      className="no-glossy h-12 border-gray-300 rounded-lg"
                     />
                     {errors.email && (
                       <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
@@ -262,7 +268,7 @@ Please get back to me. Thank you!
                 <div>
                   <select 
                     {...register('subject')}
-                    className="w-full h-12 px-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="no-glossy w-full h-12 px-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
                     <option value="">All Categories</option>
                     <option value="structural-steel">Structural Steel</option>
@@ -280,7 +286,7 @@ Please get back to me. Thank you!
                     {...register('message', { required: 'Message is required' })}
                     placeholder="Tell us about your steel requirements, project specifications, or any questions about our products..."
                     rows={6}
-                    className="resize-none border-gray-300 rounded-lg"
+                    className="no-glossy resize-none border-gray-300 rounded-lg"
                   />
                   {errors.message && (
                     <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
@@ -291,25 +297,27 @@ Please get back to me. Thank you!
                   <Button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="px-6 py-3 bg-customBlue hover:bg-customBlue/90 text-white rounded-3xl font-exo font-medium transition-colors"
+                    className="glossy-button px-6 py-3 bg-customBlue hover:bg-customBlue/90 text-white font-semibold rounded-3xl font-exo transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl disabled:opacity-50 [&>*]:text-white"
+                    style={{ color: 'white', backgroundColor: '#00416A' }}
                   >
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                        Sending Message
+                        <span className="text-white">Sending Message</span>
                       </>
                     ) : (
-                      'Send Message'
+                      <span className="text-white">Send Message</span>
                     )}
                   </Button>
                   
                   <Button 
                     type="button"
                     onClick={handleSubmit(sendViaWhatsApp)}
-                    className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-3xl font-exo font-medium transition-colors"
+                    className="glossy-button px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-3xl font-exo transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl [&>*]:text-white"
+                    style={{ color: 'white', backgroundColor: '#059669' }}
                   >
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Send via WhatsApp
+                    <MessageCircle className="w-4 h-4 mr-2 text-white" />
+                    <span className="text-white">Send via WhatsApp</span>
                   </Button>
                 </div>
               </form>
@@ -320,7 +328,7 @@ Please get back to me. Thank you!
               <img
                 src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
                 alt="Steel construction and industrial materials"
-                className="w-full h-96 object-cover rounded-lg shadow-lg"
+                className="glossy-image w-full h-96 object-cover"
               />
             </div>
           </div>
