@@ -1,7 +1,6 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
 import { contactForm as contactFormData } from './contact-form'
-import { contact as contactPageData } from './contact-page'
 import { productMousepad as productMousepadData } from './product-mousepad'
 import { productHat as productHatData } from './product-hat'
 import { home } from './home'
@@ -287,7 +286,7 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding pages...`)
 
-  const [_, contactPage] = await Promise.all([
+  const [homePage] = await Promise.all([
     payload.create({
       collection: 'pages',
       depth: 0,
@@ -295,16 +294,6 @@ export const seed = async ({
         JSON.stringify(home)
           .replace(/"\{\{IMAGE_1\}\}"/g, String(imageHomeID))
           .replace(/"\{\{IMAGE_2\}\}"/g, String(image2ID)),
-      ),
-    }),
-    payload.create({
-      collection: 'pages',
-      depth: 0,
-      data: JSON.parse(
-        JSON.stringify(contactPageData).replace(
-          /"\{\{CONTACT_FORM_ID\}\}"/g,
-          String(contactFormID),
-        ),
       ),
     }),
   ])
@@ -325,12 +314,9 @@ export const seed = async ({
           },
           {
             link: {
-              type: 'reference',
+              type: 'custom',
               label: 'Contact',
-              reference: {
-                relationTo: 'pages',
-                value: contactPage.id,
-              },
+              url: '/contact',
             },
           },
         ],
