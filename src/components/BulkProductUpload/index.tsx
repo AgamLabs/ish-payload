@@ -20,7 +20,6 @@ interface ProductDataTemp {
   price: number;
   description?: string;
   category?: string;
-  variantList: any[]; // array of variant rows
 }
 
 interface ProductData {
@@ -28,7 +27,6 @@ interface ProductData {
   price: number;
   description?: string;
   category?: string;
-  variants: Product["variants"];
 }
 
 interface BulkUploadResponse {
@@ -59,110 +57,138 @@ const BulkProductUpload: React.FC = () => {
     try {
       const data = await file.arrayBuffer();
       const workbook = XLSX.read(data);
-      const worksheet = workbook.Sheets[workbook.SheetNames[5]];
+      const worksheet = workbook.Sheets[workbook.SheetNames[2]];
       const rawData = XLSX.utils.sheet_to_json<any>(worksheet, { header: 1 }); // Use array of arrays
 
-      // Find header row, value row, and width row
-      const [mainHeader, valueRow, ...dataRows] = rawData; // Second row has product info and width headers
-      // mainHeader: [Title, Description, Category, Variant_Thickness, ...]
-      // valueRow:   [CR Coils, Flat Products, ... , '', 900, 1000, ...]
-
+      // Detect sheet structure - check if second row has grade info or product info
+      const [mainHeader, secondRow, thirdRow, ...dataRows] = rawData;
+      
       // Find the index for thickness and width columns
       const thicknessColIdx = mainHeader.findIndex((h) =>
         String(h).toLowerCase().includes("thickness")
       );
-      const widthStartIdx = thicknessColIdx + 1;
-      const widthHeaders = valueRow.slice(widthStartIdx); // Use valueRow for width headers
+      const widthColIdx = mainHeader.findIndex((h) =>
+        String(h).toLowerCase().includes("width")
+      );
+      const gradeStartIdx = Math.max(thicknessColIdx, widthColIdx) + 1;
 
-      // Get product info from value row
-      const title = valueRow[0] || "";
-      const description = valueRow[1] || "";
-      const category = valueRow[2] || "";
+      // Determine sheet structure by checking different patterns
+      const hasGradeRow = secondRow && secondRow.slice(gradeStartIdx).some((cell: any) => 
+        cell && String(cell).match(/\d+\s*GSM|Grade|[A-Z]+\d*/i)
+      );
 
-      const productMap = new Map<string, ProductDataTemp>();
-      const key = `${title}||${category}`;
-      productMap.set(key, {
-        title,
-        price: 0,
-        description,
-        category,
-        variantList: [],
-      });
+      // Check if this is a "Grade in Header" format where mainHeader has "Grade" columns
+      const hasGradeInHeader = mainHeader.slice(gradeStartIdx).some((h: any) =>
+        h && String(h).toLowerCase().includes("grade")
+      );
+
+      let baseTitle, description, category, gradeHeaders, widthHeaders, actualDataRows;
+
+      if (hasGradeInHeader) {
+        // Structure: Header with Grade columns -> Product Info Row -> Data Rows
+        // Row 1: [Title, Description, Category, Variant_Thickness, Variant_Width, Grade, Grade, ...]
+        // Row 2: [Zero Spangles, '', Flat Products, In MM, 1270, 120, 180, 275, ...]
+        gradeHeaders = secondRow.slice(gradeStartIdx); // Grade values from product info row
+        widthHeaders = []; // No separate width row, width is in product info
+        baseTitle = secondRow[0] || "";
+        description = secondRow[1] || "";
+        category = secondRow[2] || "";
+        actualDataRows = [thirdRow, ...dataRows].filter(row => row && row.length > 0);
+      } else if (hasGradeRow) {
+        // Structure: Header -> Grade Row -> Width Row -> Data Rows
+        gradeHeaders = secondRow.slice(gradeStartIdx);
+        widthHeaders = thirdRow ? thirdRow.slice(gradeStartIdx) : [];
+        baseTitle = thirdRow[0] || "";
+        description = thirdRow[1] || "";
+        category = thirdRow[2] || "";
+        actualDataRows = dataRows;
+      } else {
+        // Structure: Header -> Product Info/Width Row -> Data Rows
+        widthHeaders = secondRow ? secondRow.slice(gradeStartIdx) : [];
+        gradeHeaders = []; // No separate grade row
+        baseTitle = secondRow[0] || "";
+        description = secondRow[1] || "";
+        category = secondRow[2] || "";
+        actualDataRows = [thirdRow, ...dataRows].filter(row => row && row.length > 0);
+      }
+
+      const productsList: ProductDataTemp[] = [];
 
       // Parse each data row (skip empty rows)
-      for (const row of dataRows) {
+      for (const row of actualDataRows) {
+        if (!row || row.length === 0) continue;
         const thickness = (row[thicknessColIdx] ?? "").toString().trim();
         if (!thickness) continue;
-        for (let i = 0; i < widthHeaders.length; i++) {
-          const width = (widthHeaders[i] ?? "").toString().trim();
-          if (!width) continue;
-          const price = Number(row[widthStartIdx + i]) || 0;
-          if (price > 0) {
-            const variant = {
-              thickness,
-              width,
-              length: "",
-              grade: "",
-              price,
-              stock: 1000,
-            };
-            productMap.get(key)!.variantList.push(variant);
+        
+        if (hasGradeInHeader) {
+          // Format 3: Grade columns in header, single width value in product row
+          for (let i = 0; i < gradeHeaders.length; i++) {
+            const grade = (gradeHeaders[i] ?? "").toString().trim();
+            if (!grade) continue;
+            const price = Number(row[gradeStartIdx + i]) || 0;
+            if (price > 0) {
+              // For this format, there's no separate width - use the width from product info row
+              const productWidth = secondRow[widthColIdx] || "";
+              
+              // Add GSM suffix to grade if it's just a number
+              const formattedGrade = /^\d+$/.test(grade) ? `${grade} GSM` : grade;
+              
+              // Create title with thickness and grade
+              const title = `${baseTitle} - T:${thickness} - W:${productWidth} - Grade:${formattedGrade}`;
+                
+              productsList.push({
+                title,
+                price,
+                description,
+                category,
+              });
+            }
+          }
+        } else {
+          // Format 1 & 2: Width-based columns
+          for (let i = 0; i < widthHeaders.length; i++) {
+            const width = (widthHeaders[i] ?? "").toString().trim();
+            const grade = gradeHeaders[i] ? (gradeHeaders[i] ?? "").toString().trim() : "";
+            if (!width) continue;
+            const price = Number(row[gradeStartIdx + i]) || 0;
+            if (price > 0) {
+              // Create title based on available data
+              let title;
+              if (grade) {
+                // Has separate grade information
+                title = `${baseTitle} - T:${thickness} x W:${width} - Grade:${grade}`;
+              } else {
+                // Check if width contains grade info (fallback for sheets without separate grade row)
+                const gradeMatch = width.match(/(\d+\s*GSM|Grade\s*\w+|[A-Z]+\d*)/i);
+                if (gradeMatch) {
+                  const extractedGrade = gradeMatch[1];
+                  const cleanWidth = width.replace(gradeMatch[0], '').trim();
+                  title = `${baseTitle} - T:${thickness} x W:${cleanWidth} - Grade:${extractedGrade}`;
+                } else {
+                  title = `${baseTitle} - T:${thickness} x W:${width}`;
+                }
+              }
+                
+              productsList.push({
+                title,
+                price,
+                description,
+                category,
+              });
+            }
           }
         }
       }
 
-      // Calculate base price as minimum variant price for each product
-      productMap.forEach((product) => {
-        if (product.variantList.length > 0) {
-          product.price = Math.min(...product.variantList.map((v) => v.price));
-        }
-      });
-
-      console.log(productMap);
+      console.log(productsList);
 
       // Convert to final format
-      const validProducts: ProductData[] = Array.from(productMap.values()).map(
-        (product) => {
-          // Collect unique, non-empty thicknesses and widths for options.values
-          const thicknessSet = new Set<string>();
-          const widthSet = new Set<string>();
-          product.variantList.forEach((variant) => {
-            const t = (variant.thickness || '').toString().trim();
-            const w = (variant.width || '').toString().trim();
-            if (t) thicknessSet.add(t);
-            if (w) widthSet.add(w);
-          });
-
-          const thicknessValues = Array.from(thicknessSet)
-            .filter((val) => val && val.length > 0)
-            .map((val) => ({
-              label: val,
-              slug: val.toLowerCase().replace(/\s+/g, "-"),
-              id: undefined,
-            }));
-          const widthValues = Array.from(widthSet)
-            .filter((val) => val && val.length > 0)
-            .map((val) => ({
-              label: val,
-              slug: val.toLowerCase().replace(/\s+/g, "-"),
-              id: undefined,
-            }));
-
-          const options = [
-            { label: "Thickness", slug: "thickness", id: null, values: thicknessValues || [] },
-            { label: "Width", slug: "width", id: null, values: widthValues || [] },
-          ];
-          const transformedVariants = transformVariants(product.variantList);
-          const { variantList, ...rest } = product;
-          return {
-            ...rest,
-            variants: {
-              options,
-              variants: transformedVariants,
-            },
-          };
-        }
-      );
+      const validProducts: ProductData[] = productsList.map((product) => ({
+        title: product.title,
+        price: product.price,
+        description: product.description,
+        category: product.category,
+      }));
 
       setProducts(validProducts);
       setUploadErrors(null);
@@ -171,37 +197,6 @@ const BulkProductUpload: React.FC = () => {
       console.error("Error parsing file:", error);
       toast.error("Error parsing file. Please check your Excel format.");
     }
-  };
-
-  // Returns Product['variants']['variants'] (array of variant objects)
-  const transformVariants = (
-    variantsData: any[]
-  ): NonNullable<NonNullable<Product["variants"]>["variants"]> => {
-    if (!Array.isArray(variantsData)) {
-      throw new Error("Invalid variants data format");
-    }
-
-    return variantsData.map((variant, index) => ({
-      id: index.toString(),
-      options: [
-        {
-          label: variant.thickness,
-          slug: variant.thickness
-            ?.toString()
-            .toLowerCase()
-            .replace(/\s+/g, "-"),
-          id: undefined,
-        },
-        {
-          label: variant.width,
-          slug: variant.width?.toString().toLowerCase().replace(/\s+/g, "-"),
-          id: undefined,
-        },
-      ],
-      price: Number(variant.price) || 0,
-      stock: Number(variant.stock) || 1000,
-      images: null,
-    }));
   };
 
   const handleBulkUpload = async () => {
@@ -294,7 +289,7 @@ const BulkProductUpload: React.FC = () => {
                   >
                     <TableCell className="px-4 py-2">{product.title}</TableCell>
                     <TableCell className="px-4 py-2">
-                      ${product.price.toFixed(2)}
+                      ₹{product.price.toFixed(2)}
                     </TableCell>
                     <TableCell className="px-4 py-2">
                       {product.category}
