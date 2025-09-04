@@ -38,9 +38,25 @@ export const FormBlock: React.FC<
   const {
     enableIntro,
     form: formFromProps,
-    form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
     introContent,
   } = props
+
+  // Safely destructure form properties with fallbacks
+  const formID = formFromProps?.id
+  const confirmationMessage = formFromProps?.confirmationMessage
+  const confirmationType = formFromProps?.confirmationType
+  const redirect = formFromProps?.redirect
+  const submitButtonLabel = formFromProps?.submitButtonLabel
+
+  // If no form is provided, don't render the form block
+  if (!formFromProps || !formID) {
+    return enableIntro && introContent ? (
+      <div>
+        <RichText data={introContent} enableGutter={false} />
+        <p>Form configuration is missing.</p>
+      </div>
+    ) : null
+  }
 
   const formMethods = useForm({
     defaultValues: buildInitialFormState(formFromProps.fields),

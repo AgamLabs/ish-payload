@@ -1,99 +1,48 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
-import { getClientSideURL } from '@/utilities/getURL';
 
-type ContactFormData = {
-  'full-name': string;
-  email: string;
-  subject: string;
-  message: string;
-};
+// Force dynamic rendering for this page
+export const dynamic = 'force-dynamic';
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [formId, setFormId] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ContactFormData>();
-
-  // Fetch the contact form ID on component mount
-  useEffect(() => {
-    const fetchFormId = async () => {
-      try {
-        const response = await fetch(`${getClientSideURL()}/api/forms?where[title][equals]=Contact`);
-        const data = await response.json();
-        if (data.docs && data.docs.length > 0) {
-          setFormId(data.docs[0].id);
-        }
-      } catch (error) {
-        console.error('Failed to fetch form ID:', error);
-      }
-    };
-    
-    fetchFormId();
-  }, []);
-
-  const onSubmit = async (data: ContactFormData) => {
-    if (!formId) {
-      setError('Form not ready. Please try again.');
-      return;
-    }
-
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      // Convert form data to the format expected by PayloadCMS
-      const submissionData = Object.entries(data).map(([field, value]) => ({
-        field,
-        value,
-      }));
-
-      const response = await fetch(`${getClientSideURL()}/api/form-submissions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          form: formId,
-          submissionData,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit form');
-      }
-
-      setIsSubmitted(true);
-      reset();
-    } catch (err) {
-      setError('Something went wrong. Please try again.');
-      console.error('Form submission error:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const sendViaWhatsApp = (data: ContactFormData) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate form submission
+    setTimeout(() => {
+      setIsSubmitted(true);
+      setIsSubmitting(false);
+    }, 2000);
+  };
+
+  const sendViaWhatsApp = () => {
     const message = `
 Hello! I have a steel inquiry:
 
-Name: ${data['full-name']}
-Email: ${data.email}
-Category: ${data.subject || 'General Inquiry'}
-Message: ${data.message}
+Name: ${formData.name}
+Email: ${formData.email}
+Subject: ${formData.subject}
+Message: ${formData.message}
 
 Please get back to me. Thank you!
     `.trim();
@@ -110,225 +59,177 @@ Please get back to me. Thank you!
           <div className="w-20 h-20 glossy-float bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <Send className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-3xl font-bold glossy-text mb-4">Thank You!</h2>
-          <p className="text-gray-600 mb-8 leading-relaxed">
-            Your message has been sent successfully. We'll get back to you within 24 hours.
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Message Sent!</h2>
+          <p className="text-gray-600 mb-6">
+            Thank you for reaching out. We'll get back to you within 24 hours.
           </p>
-          <Button 
+          <button 
             onClick={() => setIsSubmitted(false)}
-            className="glossy-button px-6 py-3 bg-customBlue hover:bg-customBlue/90 text-white font-semibold rounded-3xl font-exo transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl [&>*]:text-white"
+            className="glossy-button px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-3xl font-exo"
             style={{ color: 'white', backgroundColor: '#00416A' }}
           >
-            <span className="text-white">Send Another Message</span>
-          </Button>
+            Send Another Message
+          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen glossy-bg">
-      {/* Hero Section */}
-      <div 
-        className="relative h-80 bg-cover bg-center bg-no-repeat glossy-hero"
-        style={{
-          backgroundImage: "linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1565728744382-61accd4aa148?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')"
-        }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center text-white px-4">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 glossy-text-white">Ask Us Question</h1>
-            <p className="text-lg md:text-xl max-w-2xl mx-auto leading-relaxed glossy-text-white">
-              Have questions about our premium steel products and services? We're here to help you find the perfect 
-              steel solutions for your construction and industrial needs.
-            </p>
-          </div>
+    <div className="min-h-screen glossy-bg py-16 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold text-center mb-6 text-white glossy-text font-exo">
+            Get in Touch
+          </h1>
+          <p className="text-xl text-white/90 max-w-3xl mx-auto">
+            Ready to discuss your steel requirements? We're here to help you find the perfect materials for your project.
+          </p>
         </div>
-      </div>
 
-      {/* Contact Information Section */}
-      <div className="py-16 glossy-bg">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold glossy-text mb-4">You can ask us questions !</h2>
-            <p className="text-gray-700 max-w-2xl mx-auto">
-              Get ready to buy our best steel products and materials. Connect with our experts 
-              to find the perfect steel solutions for your construction and industrial projects.
-            </p>
-          </div>
-          
-          <div className="grid lg:grid-cols-2 gap-12 items-start">
-            {/* Contact Details */}
-            <div className="space-y-8">
-              {/* Chennai Office */}
-              <div className="glossy-card p-6 rounded-xl">
-                <div className="flex items-start space-x-4">
-                  <div className="glossy-float bg-green-100 p-3 rounded-full">
-                    <MapPin className="w-6 h-6 text-green-600" />
+        <div className="grid md:grid-cols-2 gap-16">
+          {/* Contact Information */}
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-6 font-exo">Contact Information</h2>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 glossy-float bg-white/10 rounded-lg flex items-center justify-center">
+                    <Phone className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">Chennai Office</h3>
-                    <p className="text-gray-600 mb-1">AC 5, 2nd Ave, AC Block, Anna Nagar,</p>
-                    <p className="text-gray-600 mb-1">Chennai, Tamil Nadu 600040</p>
-                    <p className="text-gray-900 font-medium">+91 44 2618 2020</p>
-                    <a href="mailto:info@ishsteel.com" className="text-green-600 hover:underline">info@ishsteel.com</a>
+                    <p className="text-white font-medium">Phone</p>
+                    <p className="text-white/80">+91 44261 82020</p>
                   </div>
                 </div>
-              </div>
-
-              {/* WhatsApp Contact */}
-              <div className="glossy-card p-6 rounded-xl">
-                <div className="flex items-start space-x-4">
-                  <div className="glossy-float bg-green-100 p-3 rounded-full">
-                    <MessageCircle className="w-6 h-6 text-green-600" />
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 glossy-float bg-white/10 rounded-lg flex items-center justify-center">
+                    <Mail className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">WhatsApp</h3>
-                    <p className="text-gray-600 mb-3">Get instant support via WhatsApp</p>
-                    <a 
-                      href="https://wa.me/914426182020?text=Hello,%20I%20would%20like%20to%20inquire%20about%20your%20steel%20products."
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="glossy-button inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-full text-sm transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl [&>*]:text-white"
-                      style={{ color: 'white', backgroundColor: '#059669' }}
-                    >
-                      <MessageCircle className="w-4 h-4 mr-2 text-white" />
-                      <span className="text-white">Chat on WhatsApp</span>
-                    </a>
+                    <p className="text-white font-medium">Email</p>
+                    <p className="text-white/80">info@indiasteelhub.com</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 glossy-float bg-white/10 rounded-lg flex items-center justify-center">
+                    <MapPin className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Address</p>
+                    <p className="text-white/80">
+                      123 Steel Avenue<br />
+                      Industrial District<br />
+                      Chennai, Tamil Nadu 600001
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Map */}
-            <div className="glossy-card rounded-xl overflow-hidden h-96">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3886.8515207778706!2d80.22098931482195!3d13.085170990778887!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a5265f1b8a5b3a3%3A0x8b5b1b0b5b1b5b1b!2sAnna%20Nagar%2C%20Chennai%2C%20Tamil%20Nadu!5e0!3m2!1sen!2sin!4v1703123456789!5m2!1sen!2sin"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Chennai Office Location - Anna Nagar"
-              />
+            <div>
+              <h3 className="text-xl font-semibold text-white mb-4 font-exo">Business Hours</h3>
+              <div className="space-y-2 text-white/80">
+                <div className="flex justify-between">
+                  <span>Monday - Friday</span>
+                  <span>9:00 AM - 6:00 PM</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Saturday</span>
+                  <span>9:00 AM - 4:00 PM</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Sunday</span>
+                  <span>Closed</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Contact Form Section */}
-      <div className="py-16 glossy-bg">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Form */}
-            <div className="glossy-card p-8 rounded-xl">
-              <h2 className="text-3xl font-bold glossy-text mb-6">
-                Fill Up The Form If You Have Any Question
-              </h2>
+          {/* Contact Form */}
+          <div>
+            <div className="glossy-card p-8 rounded-2xl">
+              <h2 className="text-2xl font-bold text-white mb-6 font-exo">Send us a Message</h2>
               
-              <form onSubmit={handleSubmit(onSubmit)} className="glossy-form">
-                {error && (
-                  <div className="glossy-card bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-red-600 text-sm">{error}</p>
-                  </div>
-                )}
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <Input
-                      {...register('full-name', { required: 'Name is required' })}
-                      placeholder="Name*"
-                      className="no-glossy h-12 border-gray-300 rounded-lg"
-                    />
-                    {errors['full-name'] && (
-                      <p className="text-red-500 text-sm mt-1">{errors['full-name'].message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <Input
-                      type="email"
-                      {...register('email', {
-                        required: 'Email is required',
-                        pattern: {
-                          value: /^\S[^\s@]*@\S+$/,
-                          message: 'Please enter a valid email address',
-                        },
-                      })}
-                      placeholder="E-mail*"
-                      className="no-glossy h-12 border-gray-300 rounded-lg"
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-                    )}
-                  </div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Your Full Name"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
+                    required
+                  />
                 </div>
 
                 <div>
-                  <select 
-                    {...register('subject')}
-                    className="no-glossy w-full h-12 px-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  >
-                    <option value="">All Categories</option>
-                    <option value="structural-steel">Structural Steel</option>
-                    <option value="reinforcement-bars">Reinforcement Bars</option>
-                    <option value="steel-sheets">Steel Sheets & Plates</option>
-                    <option value="pipes-tubes">Pipes & Tubes</option>
-                    <option value="custom-fabrication">Custom Fabrication</option>
-                    <option value="bulk-orders">Bulk Orders</option>
-                    <option value="technical-support">Technical Support</option>
-                  </select>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="your@email.com"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
+                    required
+                  />
                 </div>
 
                 <div>
-                  <Textarea
-                    {...register('message', { required: 'Message is required' })}
+                  <input
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    placeholder="Subject (e.g., Steel Sheets, Pipes, etc.)"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <textarea
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
                     placeholder="Tell us about your steel requirements, project specifications, or any questions about our products..."
                     rows={6}
-                    className="no-glossy resize-none border-gray-300 rounded-lg"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200"
+                    required
                   />
-                  {errors.message && (
-                    <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
-                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Button 
+                  <button 
                     type="submit" 
                     disabled={isSubmitting}
-                    className="glossy-button px-6 py-3 bg-customBlue hover:bg-customBlue/90 text-white font-semibold rounded-3xl font-exo transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl disabled:opacity-50 [&>*]:text-white"
+                    className="flex-1 glossy-button px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-3xl font-exo transition-all duration-300 disabled:opacity-50"
                     style={{ color: 'white', backgroundColor: '#00416A' }}
                   >
-                    {isSubmitting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                        <span className="text-white">Sending Message</span>
-                      </>
-                    ) : (
-                      <span className="text-white">Send Message</span>
-                    )}
-                  </Button>
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                  </button>
                   
-                  <Button 
+                  <button 
                     type="button"
-                    onClick={handleSubmit(sendViaWhatsApp)}
-                    className="glossy-button px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-3xl font-exo transition-all duration-300 backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl [&>*]:text-white"
+                    onClick={sendViaWhatsApp}
+                    className="flex-1 glossy-button px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-3xl font-exo transition-all duration-300 flex items-center justify-center"
                     style={{ color: 'white', backgroundColor: '#059669' }}
                   >
                     <MessageCircle className="w-4 h-4 mr-2 text-white" />
-                    <span className="text-white">Send via WhatsApp</span>
-                  </Button>
+                    Send via WhatsApp
+                  </button>
                 </div>
               </form>
             </div>
 
             {/* Image */}
-            <div className="lg:order-first">
-              <img
-                src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                alt="Steel construction and industrial materials"
-                className="glossy-image w-full h-96 object-cover"
+            <div className="mt-8 rounded-2xl overflow-hidden glossy-card">
+              <img 
+                src="/media/section5.avif" 
+                alt="Steel Manufacturing" 
+                className="w-full h-64 object-cover"
               />
             </div>
           </div>

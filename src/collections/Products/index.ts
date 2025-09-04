@@ -20,7 +20,7 @@ import { adminsOrPublished } from "@/access/adminsOrPublished";
 
 import { deleteProductFromCarts } from "./hooks/deleteProductFromCarts";
 import { revalidateProduct } from "./hooks/revalidateProduct";
-import BulkProductUpload from "../../components/BulkProductUpload";
+// import BulkProductUpload from "../../components/BulkProductUpload";
 // import { $getRoot, $getSelection, createEditor } from 'lexical';
 
 
@@ -72,7 +72,7 @@ export const Products: CollectionConfig = {
     useAsTitle: "title",
     components: {
       // Add bulk upload button to the products admin UI
-      beforeListTable: [BulkProductUpload as any],
+      beforeListTable: ["@/components/BulkProductUpload"],
     },
   },
   fields: [
