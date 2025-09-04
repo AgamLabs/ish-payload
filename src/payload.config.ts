@@ -48,14 +48,15 @@ const _generateTitle: GenerateTitle = <_Page>({ doc }) => {
   return `${doc?.title ?? ""} | My Store`;
 };
 
-// Use Vercel Postgres adapter with automatic configuration
+// Use Vercel Postgres adapter with improved connection configuration
 const databaseAdapter = vercelPostgresAdapter({
   // The adapter will use process.env.POSTGRES_URL by default
   // You can override it with your own connection string if needed
   pool: process.env.POSTGRES_URL
     ? {
-      connectionString: process.env.POSTGRES_URL,
-    }
+        connectionString: process.env.POSTGRES_URL,
+        max: 5, // Reduce maximum connections to prevent termination
+      }
     : undefined,
 });
 

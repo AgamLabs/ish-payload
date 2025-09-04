@@ -19,7 +19,7 @@ class ContactApiService {
 
   constructor() {
     this.baseUrl = getClientSideURL();
-    this.timeout = CONTACT_CONFIG.form.timeout;
+    this.timeout = 10000; // Increased timeout to 10 seconds
   }
 
   /**
@@ -32,7 +32,7 @@ class ContactApiService {
 
       try {
         const response = await fetch(
-          `${this.baseUrl}/api/forms?where[title][equals]=Contact`,
+          `${this.baseUrl}/api/forms?where[title][equals]=Contact Form`,
           {
             signal: controller.signal,
             headers: {
@@ -74,7 +74,22 @@ class ContactApiService {
       const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
       try {
+        // Validate formId before submission
+        if (!formId) {
+          throw new ContactFormError(
+            'Form ID is required for submission',
+            'VALIDATION_ERROR',
+            { formId }
+          );
+        }
+
         const payload: SubmissionApiPayload = formatApiSubmission(data, formId);
+
+        // Log submission for debugging
+        console.log('Submitting form data:', {
+          formId,
+          submissionData: payload.submissionData,
+        });
 
         const response = await fetch(`${this.baseUrl}/api/form-submissions`, {
           method: 'POST',
@@ -88,11 +103,15 @@ class ContactApiService {
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const errorText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
         }
 
-        // Optionally parse response if needed
-        await response.json();
+        // Parse response to check for success
+        const result = await response.json();
+        console.log('Form submission successful:', result);
+        
+        return result;
       } catch (error) {
         clearTimeout(timeoutId);
         throw handleApiError(error, 'Form submission');

@@ -89,10 +89,24 @@ export const openWhatsApp = (data: NormalizedContactData): void => {
  */
 export const formatApiSubmission = (data: ContactFormData, formId: string) => ({
   form: formId,
-  submissionData: Object.entries(data).map(([field, value]) => ({
-    field,
-    value,
-  })),
+  submissionData: [
+    {
+      field: 'full-name',
+      value: data['full-name'],
+    },
+    {
+      field: 'email', 
+      value: data.email,
+    },
+    {
+      field: 'subject',
+      value: data.subject,
+    },
+    {
+      field: 'message',
+      value: data.message,
+    },
+  ],
 });
 
 /**
@@ -100,6 +114,16 @@ export const formatApiSubmission = (data: ContactFormData, formId: string) => ({
  */
 export const handleApiError = (error: unknown, context: string): ContactFormError => {
   if (error instanceof Error) {
+    // Handle connection reset errors
+    if (error.message.includes('ECONNRESET') || error.message.includes('aborted')) {
+      return new ContactFormError(
+        'Connection was interrupted. Please try again.',
+        'NETWORK_ERROR',
+        error
+      );
+    }
+    
+    // Handle network and fetch errors
     if (error.message.includes('network') || error.message.includes('fetch')) {
       return new ContactFormError(
         'Network error. Please check your connection and try again.',
@@ -107,6 +131,16 @@ export const handleApiError = (error: unknown, context: string): ContactFormErro
         error
       );
     }
+    
+    // Handle timeout errors
+    if (error.message.includes('timeout') || error.message.includes('signal')) {
+      return new ContactFormError(
+        'Request timed out. Please try again.',
+        'NETWORK_ERROR',
+        error
+      );
+    }
+    
     return new ContactFormError(
       `${context} failed: ${error.message}`,
       'API_ERROR',
@@ -126,8 +160,8 @@ export const handleApiError = (error: unknown, context: string): ContactFormErro
  */
 export const withRetry = async <T>(
   fn: () => Promise<T>,
-  maxRetries: number = CONTACT_CONFIG.form.maxRetries,
-  delay: number = 1000
+  maxRetries: number = 2, // Reduced from config to prevent connection pile-up
+  delay: number = 1500 // Increased delay
 ): Promise<T> => {
   let lastError: Error;
   
@@ -137,10 +171,19 @@ export const withRetry = async <T>(
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
       
+      // Don't retry on certain errors
+      if (lastError.message.includes('Not Found') || 
+          lastError.message.includes('400') ||
+          lastError.message.includes('401') ||
+          lastError.message.includes('403')) {
+        break;
+      }
+      
       if (i === maxRetries) break;
       
-      // Exponential backoff
-      await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+      // Exponential backoff with jitter
+      const backoffDelay = delay * Math.pow(2, i) + Math.random() * 1000;
+      await new Promise(resolve => setTimeout(resolve, backoffDelay));
     }
   }
   

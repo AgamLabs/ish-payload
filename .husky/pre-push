@@ -1,5 +1,0 @@
-# Add node bin to PATH
-export PATH="/home/nandha/.config/nvm/versions/node/v23.6.1/bin:$PATH"
-
-# Run build
-pnpm build

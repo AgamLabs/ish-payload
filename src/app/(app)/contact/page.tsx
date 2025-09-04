@@ -1,55 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
 import { CONTACT_CONFIG } from '@/config/contact.config';
+import { useContactForm } from '@/hooks/useContactForm';
+import { ContactFormData } from '@/types/contact.types';
 
 // Force dynamic rendering for this page
 export const dynamic = 'force-dynamic';
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+  const { 
+    register, 
+    handleSubmit, 
+    handleWhatsAppSubmit,
+    state, 
+    resetForm,
+    formState,
+    categories 
+  } = useContactForm({
+    onSuccess: () => {
+      console.log('Form submitted successfully!');
+    },
+    onError: (error) => {
+      console.error('Form submission error:', error);
+    }
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitted(true);
-      setIsSubmitting(false);
-    }, 2000);
-  };
 
   const sendViaWhatsApp = () => {
-    const message = CONTACT_CONFIG.whatsapp.messageTemplate({
-      name: formData.name,
-      email: formData.email,
-      category: formData.subject,
-      message: formData.message
-    });
-    
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${CONTACT_CONFIG.company.whatsapp}?text=${encodedMessage}`;
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    handleWhatsAppSubmit();
   };
 
-  if (isSubmitted) {
+  if (state.isSubmitted) {
     return (
       <div className="min-h-screen glossy-bg flex items-center justify-center py-12 px-4">
         <div className="max-w-md mx-auto text-center">
@@ -61,7 +43,7 @@ export default function ContactPage() {
             {CONTACT_CONFIG.ui.messages.success.description}
           </p>
           <button 
-            onClick={() => setIsSubmitted(false)}
+            onClick={() => resetForm()}
             className="glossy-button px-6 py-3 bg-customBlue hover:bg-blue-700 text-white font-semibold rounded-3xl font-exo transition-colors backdrop-blur-md border border-white/30 shadow-lg hover:shadow-xl"
           >
             Send Another Message
@@ -168,75 +150,88 @@ export default function ContactPage() {
             <div className="glossy-card p-8 rounded-xl">
               <h2 className="text-3xl font-bold glossy-text mb-6">
                 Fill Up The Form If You Have Any Question
-              </h2>
-              
-              <form onSubmit={handleSubmit} className="glossy-form">
+              </h2>              <form onSubmit={handleSubmit} className="glossy-form">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <input
+                      {...register('full-name', { 
+                        required: 'Name is required',
+                        minLength: { value: 2, message: 'Name must be at least 2 characters' },
+                        maxLength: { value: 50, message: 'Name must be less than 50 characters' }
+                      })}
                       type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
                       placeholder="Name*"
                       className="no-glossy w-full h-12 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200"
-                      required
-                      minLength={CONTACT_CONFIG.form.validationRules.name.minLength}
-                      maxLength={CONTACT_CONFIG.form.validationRules.name.maxLength}
                     />
+                    {formState.errors['full-name'] && (
+                      <p className="text-red-500 text-sm mt-1">{formState.errors['full-name']?.message}</p>
+                    )}
                   </div>
 
                   <div>
                     <input
+                      {...register('email', { 
+                        required: 'Email is required',
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: 'Invalid email address'
+                        }
+                      })}
                       type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
                       placeholder="E-mail*"
                       className="no-glossy w-full h-12 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200"
-                      required
-                      pattern={CONTACT_CONFIG.form.validationRules.email.pattern.source}
                     />
+                    {formState.errors.email && (
+                      <p className="text-red-500 text-sm mt-1">{formState.errors.email?.message}</p>
+                    )}
                   </div>
                 </div>
 
                 <div>
                   <select
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
+                    {...register('subject', { required: 'Please select a category' })}
                     className="no-glossy w-full h-12 px-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    required
                   >
                     <option value="">All Categories</option>
-                    {CONTACT_CONFIG.productCategories.map((category) => (
+                    {categories.map((category) => (
                       <option key={category.value} value={category.value}>{category.label}</option>
                     ))}
                   </select>
+                  {formState.errors.subject && (
+                    <p className="text-red-500 text-sm mt-1">{formState.errors.subject?.message}</p>
+                  )}
                 </div>
 
                 <div>
                   <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
+                    {...register('message', { 
+                      required: 'Message is required',
+                      minLength: { value: 10, message: 'Message must be at least 10 characters' },
+                      maxLength: { value: 1000, message: 'Message must be less than 1000 characters' }
+                    })}
                     placeholder="Tell us about your steel requirements, project specifications, or any questions about our products..."
                     rows={6}
                     className="no-glossy w-full px-4 py-3 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200"
-                    required
-                    minLength={CONTACT_CONFIG.form.validationRules.message.minLength}
-                    maxLength={CONTACT_CONFIG.form.validationRules.message.maxLength}
                   />
+                  {formState.errors.message && (
+                    <p className="text-red-500 text-sm mt-1">{formState.errors.message?.message}</p>
+                  )}
                 </div>
+
+                {state.error && (
+                  <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                    {state.error}
+                  </div>
+                )}
 
                 <div className="flex flex-col sm:flex-row gap-4 mt-6">
                   <button 
                     type="submit" 
-                    disabled={isSubmitting}
+                    disabled={state.isSubmitting}
                     className="flex-1 inline-flex items-center justify-center px-6 py-3 text-white font-semibold rounded-3xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 min-h-[48px]"
                     style={{ backgroundColor: '#00416A' }}
                   >
-                    {isSubmitting ? (
+                    {state.isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                         {CONTACT_CONFIG.ui.messages.loading}

@@ -61,7 +61,7 @@ export const useContactForm = (options: UseContactFormOptions = {}) => {
         console.error('Failed to initialize form:', error);
         setState(prev => ({ 
           ...prev, 
-          error: 'Failed to initialize form. Please refresh the page.' 
+          error: 'Contact form not found. Please check admin panel setup.' 
         }));
       }
     };
@@ -103,7 +103,7 @@ export const useContactForm = (options: UseContactFormOptions = {}) => {
     if (!state.formId) {
       setState(prev => ({ 
         ...prev, 
-        error: CONTACT_CONFIG.ui.messages.formNotReady 
+        error: 'Contact form is not set up yet. Please check the admin panel.' 
       }));
       return;
     }
@@ -146,6 +146,9 @@ export const useContactForm = (options: UseContactFormOptions = {}) => {
             error
           );
 
+      // Log error for debugging
+      console.error('Contact form submission error:', contactError);
+
       setState(prev => ({ 
         ...prev, 
         error: contactError.message,
@@ -153,7 +156,6 @@ export const useContactForm = (options: UseContactFormOptions = {}) => {
       }));
       
       options.onError?.(contactError);
-      console.error('Form submission error:', contactError);
     }
   }, [state.formId, lastSubmission, reset, options]);
 
