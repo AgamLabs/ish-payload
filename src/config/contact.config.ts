@@ -7,9 +7,9 @@ export const CONTACT_CONFIG = {
   // Company Information
   company: {
     name: 'ISH Steel',
-    email: 'info@ishsteel.com',
-    phone: '+91 44 2618 2020',
-    whatsapp: '914426182020',
+    email: 'saran@indiasteelhub.com',
+    phone: '+91 9877224477',
+    whatsapp: '91 9877224477',
   },
 
   // Office Locations
@@ -17,8 +17,8 @@ export const CONTACT_CONFIG = {
     chennai: {
       name: 'Chennai Office',
       address: {
-        line1: 'AC 5, 2nd Ave, AC Block, Anna Nagar,',
-        line2: 'Chennai, Tamil Nadu 600040',
+        line1: 'No. C-47, Off No.44, 1st Floor, Anna Nagar Plaza,',
+        line2: '2nd Avenue Anna Nagar, Chennai - 600040',
       },
       coordinates: {
         lat: 13.085170990778887,

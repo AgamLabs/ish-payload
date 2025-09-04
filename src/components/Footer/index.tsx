@@ -1,6 +1,7 @@
 "use client";
 
 import type { Footer as FooterType } from '@/payload-types'
+import { CONTACT_CONFIG } from '@/config/contact.config';
 
 import {
   Facebook,
@@ -40,7 +41,7 @@ export const Footer = memo(function Footer({ footerData }: FooterProps) {
             <div className="mb-3">
               <Image 
                 src="/media/logo/footer_logo.png" 
-                alt="India Steel Hub Logo" 
+                alt={`${CONTACT_CONFIG.company.name} Logo`} 
                 width={180} 
                 height={40} 
                 className="mb-2"
@@ -49,12 +50,12 @@ export const Footer = memo(function Footer({ footerData }: FooterProps) {
               />
             </div>
             <div className="text-sm leading-relaxed mb-2 text-white">
-              AC 5, 2nd Ave, AC Block, Anna Nagar,<br />
-              Chennai, Tamil Nadu 600040
+              {CONTACT_CONFIG.offices.chennai.address.line1}<br />
+              {CONTACT_CONFIG.offices.chennai.address.line2}
             </div>
             <div className="mb-2 text-sm text-white">
-              <span className="font-semibold">1800 309 3099</span> or <br />
-              <a href="mailto:info@indiasteelhub.com" className="underline text-white">info@indiasteelhub.com</a>
+              <span className="font-semibold">{CONTACT_CONFIG.company.phone}</span> or <br />
+              <a href={`mailto:${CONTACT_CONFIG.company.email}`} className="underline text-white">{CONTACT_CONFIG.company.email}</a>
             </div>
             {/* Social Icons */}
             <div className="flex gap-3 mb-3 mt-1">
@@ -100,7 +101,7 @@ export const Footer = memo(function Footer({ footerData }: FooterProps) {
             <Link href="/terms" className="hover:underline text-white">Terms &amp; Conditions</Link>
           </div>
           <div>
-            &copy; {currentYear} India Steel Hub Private Limited.
+            &copy; {currentYear} {CONTACT_CONFIG.company.name} Private Limited.
           </div>
         </div>
       </div>
